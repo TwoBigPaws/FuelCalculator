@@ -33,6 +33,14 @@
         display: flex;
         align-items: center;
     }
+
+    .form-group > label {
+        white-space: nowrap;
+    }
+
+    .nav-tabs {
+        margin-bottom: 10px;
+    }
 </style>
 
 <script>
@@ -124,31 +132,34 @@
         </small>
         <div class="panel panel-default">
             <div class="panel-body">
+
                 <form class="form-horizontal">
+
+
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Session Time</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 control-label">Session Time</label>
+                        <div class="col-sm-8">
                             <input class="form-control" type="number" ng-model="sessiontimeminutes" placeholder="Email">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Lap Time</label>
-                        <div class="col-sm-5">
+                        <label class="col-sm-4 control-label">Lap Time</label>
+                        <div class="col-sm-4">
                             <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
                         </div>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-10">
+                        <div class="col-sm-12">
                             <small>Lap duration in seconds {{singlelaptime()}}</small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Fuel consumption per lap</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 control-label">Fuel consumption per lap</label>
+                        <div class="col-sm-8">
                             <input class="form-control" id="consumption" ng-model="consumption"
                                    placeholder="ltr/kg/gal">
                         </div>
