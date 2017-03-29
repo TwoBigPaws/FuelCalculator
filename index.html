@@ -17,6 +17,11 @@
     body {
         background: url("fuel.png");
     }
+    .container {
+        background-color:   rgba(238, 238, 238, .7);
+        margin: 20px;
+        padding: 20px;
+    }
 </style>
 
 <script>
@@ -99,8 +104,8 @@
 <body ng-app="CalcApp">
 
     <div class="container" ng-controller="CalcCtrl">
-        <div class="jumbotron">
-            <h1>Fuel Calculator</h1>
+
+            <h2>Fuel Calculator</h2>
             <small>
                 Quickly determine how much fuel you need
             </small>
@@ -137,22 +142,21 @@
                     </form>
                 </div>
                 <div class="panel-footer">
-                    <p>You need {{fuelneededinsession() | number : 3}} units of fuel</p>
-                    <p><small>Your race should be {{lapsinsession()}} laps</small></p>
+                    <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
+                    <p><small>Your race should be {{lapsinsession() | number}} laps</small></p>
 
                 </div>
             </div>
 
 
-            I'd love your feedback, email me @ <a ng-href="twobigpaws@gmail.com{{hash}}">twobigpaws@gmail.com</a>.
+            I'd love your feedback.
+            <br>
+            Email me @ <a mailto="twobigpaws@gmail.com">twobigpaws@gmail.com</a>.
 
             <div>
                 Contribute to this project on <a ng-href="https://github.com/TwoBigPaws/FuelCalculator{{hash}}">GitHub<a/>
             </div>
         </div>
-    </div>
-
-
 
 </body>
 </html>
