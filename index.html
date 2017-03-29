@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Fuel Calculator</title>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
@@ -114,62 +114,63 @@
 
 <body ng-app="CalcApp">
 
-    <div class="jumbotron vertical-center">
+<div class="jumbotron vertical-center">
 
-        <div class="container-fluid" ng-controller="CalcCtrl">
+    <div class="container-fluid" ng-controller="CalcCtrl">
 
-            <h2>Fuel Calculator</h2>
-            <small>
-                Quickly determine how much fuel you need
-            </small>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Session Time</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" id="sessionTime"  ng-model="sessiontimeminutes"  placeholder="Email">
-                            </div>
+        <h2>Fuel Calculator</h2>
+        <small>
+            Quickly determine how much fuel you need
+        </small>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Session Time</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="number" ng-model="sessiontimeminutes" placeholder="Email">
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Lap Time</label>
-                            <div class="col-sm-5">
-                                <input class="form-control" id="lapTimeMinutes" ng-model="lapminutes" placeholder="Minutes">
-                            </div>
-                            <div class="col-sm-5">
-                                <input class="form-control" id="lapTImeSeconds" ng-model="lapseconds"  placeholder="Seconds">
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Lap Time</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-10">
-                                <small>Lap duration in seconds {{singlelaptime()}}</small>
-                            </div>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <small>Lap duration in seconds {{singlelaptime()}}</small>
+                        </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Fuel consumption per lap</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" id="consumption" ng-model="consumption" placeholder="ltr/kg/gal">
-                            </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Fuel consumption per lap</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="consumption" ng-model="consumption"
+                                   placeholder="ltr/kg/gal">
                         </div>
-                    </form>
-                </div>
-                <div class="panel-footer">
-                    <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
-                    <p><small>Your race should be {{lapsinsession() | number}} laps</small></p>
-
-                </div>
+                    </div>
+                </form>
             </div>
+            <div class="panel-footer">
+                <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
+                <p>
+                    <small>Your race should be {{lapsinsession() | number}} laps</small>
+                </p>
 
-
-            I'd love your feedback.
-            <br>
-            Email me @ <a mailto="twobigpaws@gmail.com">twobigpaws@gmail.com</a>.
-
-            <div>
-                Contribute to this project on <a ng-href="https://github.com/TwoBigPaws/FuelCalculator{{hash}}">GitHub<a/>
             </div>
         </div>
+        I'd love your feedback.
+        <br>
+        Email me @ <a mailto="twobigpaws@gmail.com">twobigpaws@gmail.com</a>.
+
+        <div>
+            Contribute to this project on <a ng-href="https://github.com/TwoBigPaws/FuelCalculator{{hash}}">GitHub<a/>
+        </div>
+    </div>
     <div>
 </body>
 </html>
