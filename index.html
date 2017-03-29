@@ -35,7 +35,7 @@
     }
 
     .form-group > label {
-        white-space: nowrap;
+        /*white-space: nowrap;*/
     }
 
     .nav-tabs {
@@ -69,6 +69,7 @@
                 $scope.totaltanksize = 90;
                 $scope.tankpercentstart = 60;
                 $scope.consumptionperminute;
+                $scope.byTimePresentation = true;
 
                 $scope.sessiontime = function () {
                     return ($scope.sessiontimeminutes * 60);
@@ -79,15 +80,22 @@
                 };
 
                 $scope.lapsinsession = function () {
-                    var laps = $scope.sessiontime() / $scope.singlelaptime();
-                    var lapCount = Math.ceil(laps);
-                    var remainder = lapCount - laps;
-                    console.log("remainder", remainder);
-                    if (remainder < 0.3) {
-                        lapCount = lapCount + 1;
+                    if ($scope.byTimePresentation){
+                        var laps = $scope.sessiontime() / $scope.singlelaptime();
+                        var lapCount = Math.ceil(laps);
+                        var remainder = lapCount - laps;
+                        console.log("remainder", remainder);
+                        if (remainder < 0.3) {
+                            lapCount = lapCount + 1;
+                        }
+                        return lapCount;
                     }
-                    $scope.lapwarning
-                    return lapCount;
+
+                    return $scope.numberOfLaps;
+                };
+
+                $scope.changeCalculationMode = function(value){
+                    $scope.byTimePresentation = value;
                 };
 
                 $scope.fuelneededinsession = function () {
@@ -134,15 +142,24 @@
             <div class="panel-body">
 
                 <form class="form-horizontal">
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" ng-class="{active: byTimePresentation}"><a ng-click="changeCalculationMode(true)">Time</a></li>
+                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a ng-click="changeCalculationMode(false)">Lap</a></li>
+                    </ul>
 
-
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Session Time</label>
+                    <div class="form-group" ng-show="!byTimePresentation">
+                        <label class="col-sm-4 control-label">Laps</label>
                         <div class="col-sm-8">
-                            <input class="form-control" type="number" ng-model="sessiontimeminutes" placeholder="Email">
+                            <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number Of Laps">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-show="byTimePresentation">
+                        <label class="col-sm-4 control-label">Session Time</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="number" ng-model="sessiontimeminutes" placeholder="Session time">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="byTimePresentation">
                         <label class="col-sm-4 control-label">Lap Time</label>
                         <div class="col-sm-4">
                             <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
@@ -151,7 +168,7 @@
                             <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-show="byTimePresentation">
                         <div class="col-sm-12">
                             <small>Lap duration in seconds {{singlelaptime()}}</small>
                         </div>
