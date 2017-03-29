@@ -1,178 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Fuel Calculator</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-		<title>Fuel Calculator</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-		<style type="text/css">
-		  form.tab-form-demo .tab-pane {
-		    margin: 20px 20px;
-		  }
-		</style>
-
-	<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-24021117-1', 'auto');
-  ga('send', 'pageview');
-
-angular.module("CalcApp", ['ui.bootstrap'])
-	.controller("CalcCtrl", function( $scope ) {
-		$scope.consumption = 0.605;
-    $scope.sessiontimeminutes = 25;
-    $scope.sessiontime;
-    $scope.lapminutes;
-    $scope.lapseconds;
-    $scope.totaltanksize = 90;
-    $scope.tankpercentstart = 60;
-		$scope.consumptionperminute;
-
-		$scope.sessiontime = function() {
-    	return ($scope.sessiontimeminutes * 60);
+<style type="text/css">
+    body {
+        background: url("fuel.png");
     }
+</style>
 
-    $scope.singlelaptime = function() {
-    	return (((+$scope.lapminutes || 0) * 60))+(+$scope.lapseconds || 0);
-    }
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-    $scope.lapsinsession = function() {
-			var laps = $scope.sessiontime() / $scope.singlelaptime();
-			var lapCount = Math.ceil( laps );
-			var remainder = lapCount - laps;
-			console.log( "remainder", remainder );
-			if( remainder < 0.3 ) {
-				lapCount = lapCount + 1;
-			}
-			$scope.lapwarning
-			return lapCount;
-    }
+    ga('create', 'UA-24021117-1', 'auto');
+    ga('send', 'pageview');
 
-		    $scope.fuelneededinsession = function() {
-		    	return $scope.lapsinsession() * $scope.consumption;
-		    }
+    angular.module("CalcApp", ['ui.bootstrap'])
+            .controller("CalcCtrl", function ($scope) {
+                $scope.consumption = 0.605;
+                $scope.sessiontimeminutes = 25;
+                $scope.sessiontime;
+                $scope.lapminutes;
+                $scope.lapseconds;
+                $scope.totaltanksize = 90;
+                $scope.tankpercentstart = 60;
+                $scope.consumptionperminute;
 
-				$scope.consumptionperminute = function() {
-					var consumptionpersecond = $scope.consumption / $scope.singlelaptime();
-				  return consumptionpersecond * 60;
-				    }
+                $scope.sessiontime = function () {
+                    return ($scope.sessiontimeminutes * 60);
+                };
 
-	$scope.maxstintlength = function() {
-    	return $scope.consumption * $scope.startingfuel();
-    }
+                $scope.singlelaptime = function () {
+                    return (((+$scope.lapminutes || 0) * 60)) + (+$scope.lapseconds || 0);
+                };
 
-   $scope.startingfuel = function() {
-    	return $scope.totaltanksize * ($scope.tankpercentstart/100);
-    }
+                $scope.lapsinsession = function () {
+                    var laps = $scope.sessiontime() / $scope.singlelaptime();
+                    var lapCount = Math.ceil(laps);
+                    var remainder = lapCount - laps;
+                    console.log("remainder", remainder);
+                    if (remainder < 0.3) {
+                        lapCount = lapCount + 1;
+                    }
+                    $scope.lapwarning
+                    return lapCount;
+                };
 
-  $scope.alertMe = function() {
-    setTimeout(function() {
-      $window.alert('You\'ve selected the alert tab!');
-    });
-  };
+                $scope.fuelneededinsession = function () {
+                    return $scope.lapsinsession() * $scope.consumption;
+                };
 
-  $scope.model = {
-    name: 'Tabs'
-  };
-});
+                $scope.consumptionperminute = function () {
+                    var consumptionpersecond = $scope.consumption / $scope.singlelaptime();
+                    return consumptionpersecond * 60;
+                };
 
-		</script>
+                $scope.maxstintlength = function () {
+                    return $scope.consumption * $scope.startingfuel();
+                };
 
-		<body ng-app="CalcApp">
-			<div ng-controller="CalcCtrl" class="container-fluid">
+                $scope.startingfuel = function () {
+                    return $scope.totaltanksize * ($scope.tankpercentstart / 100);
+                };
+
+                $scope.alertMe = function () {
+                    setTimeout(function () {
+                        $window.alert('You\'ve selected the alert tab!');
+                    });
+                };
+
+                $scope.model = {
+                    name: 'Tabs'
+                };
+            });
+
+</script>
+
+<body ng-app="CalcApp">
+
+    <div class="container" ng-controller="CalcCtrl">
+        <div class="jumbotron">
+            <h1>Fuel Calculator</h1>
+            <small>
+                Quickly determine how much fuel you need
+            </small>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Session Time</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="sessionTime"  ng-model="sessiontimeminutes"  placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Lap Time</label>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="lapTimeMinutes" ng-model="lapminutes" placeholder="Minutes">
+                            </div>
+                            <div class="col-sm-5">
+                                <input class="form-control" id="lapTImeSeconds" ng-model="lapseconds"  placeholder="Seconds">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <small>Lap duration in seconds {{singlelaptime()}}</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Fuel consumption per lap</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="consumption" ng-model="consumption" placeholder="ltr/kg/gal">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <p>You need {{fuelneededinsession() | number : 3}} units of fuel</p>
+                    <p><small>Your race should be {{lapsinsession()}} laps</small></p>
+
+                </div>
+            </div>
 
 
-<div>
-	<img ng-src="https://www.dropbox.com/s/vpkqe5k39lg02z2/Aconex%20Racing%20logo%201-1%20web.png?dl=1" height="100px" width="500px" />
-	<div>
+            I'd love your feedback, email me @ <a ng-href="twobigpaws@gmail.com{{hash}}">twobigpaws@gmail.com</a>.
 
-<h2>
-		<div>
-		Welcome to a simple iRacing Fuel Calculator.
-	  </div>
-</h2>
-
-<h4>
-Need to quickly find out how much fuel you need for that timed race?
-</h4>
-
-<p>
-		This basic app is designed for you to easily calculate how much fuel you need for time limited races.
-</p>
-
-
-<form class="form-group-lg">
-				      <div class="col-xs-2">
-			    <label>Session Time (minutes)</label>
-			    <input type="number" class="form-control" ng-model="sessiontimeminutes" autofocus />
-			    <label>Lap time</label>
-			    <input type="number" class="form-control" ng-model="lapminutes" placeholder="Minutes"/ >
-			    <label></label>
-			    <input type="number" class="form-control" ng-model="lapseconds" placeholder="seconds..."/>
-				<label>Fuel consumption per lap</label>
-				<input type="number" class="form-control" ng-model="consumption">
-					  <input type="reset" class="btn btn-sm btn-primary">
-		</div>
-</form>
-<br>
-
-		<h3>
-		You need <b> {{fuelneededinsession() | number : 3}} </b> units of fuel
-	</h3>
-
-		<div>
-		Lap duration in seconds {{singlelaptime()}}
-		</div>
-
-		<div>
-		Your race should be {{lapsinsession()}} laps
-		</div>
+            <div>
+                Contribute to this project on <a ng-href="https://github.com/TwoBigPaws/FuelCalculator{{hash}}">GitHub<a/>
+            </div>
+        </div>
+    </div>
 
 
 
-
-
-<div>
-Consumption per minute {{consumptionperminute() | number : 3}}
-Warning, this multiplied by session length will most likely not be enough fuel as sessions run time + 1 lap.
-</div>
-
-<div>
-Max stint length {{maxstintlength()}}
-</div>
-
-      <div class="input">
-			    <label>Tank percent start</label>
-			    <input type="number" class="form-control" ng-model="tankpercentstart">
-			</div>
-
-       <div class="form-group">
-			    <label>Full tank size</label>
-			    <input type="number" class="form-control" ng-model="totaltanksize">
-			</div>
-
-      <div>
-			Fuel at start {{startingfuel()}}
-			</div>
-
-      <div>
-			Laps before pit {{startingfuel()}}
-			</div>
-
-      <div>
-			I'd love your feedback, email me @	<a ng-href="twobigpaws@gmail.com{{hash}}">twobigpaws@gmail.com</a>.
-			<br>
-			<div>
-				Contribute to this project on <a ng-href="https://github.com/TwoBigPaws/FuelCalculator{{hash}}">GitHub<a/>
-			</div>
-	      		
-
-			
-		</div>
-	</body>
-	</html>
+</body>
+</html>
