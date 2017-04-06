@@ -31,7 +31,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="fuelCalculatorByLaps.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 
 <style type="text/css">
     body {
@@ -73,8 +76,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-    angular.module("CalcApp", ['ui.bootstrap'])
-            .controller("CalcCtrl", function ($scope) {
+  angular.module("CalcApp", ['ui.bootstrap', "FuelCalculators"])
+    .controller("CalcCtrl", function ($scope, ByLap) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
                 $scope.sessiontime;
@@ -84,6 +87,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.tankpercentstart = 60;
                 $scope.consumptionperminute;
                 $scope.byTimePresentation = true;
+
+                var lapDataHandler = {
+                  lapData: [],
+                  handleData: function (lapData) {
+                    this.lapData.push(lapData);
+                  }
+                };
+
+                var pitStopHandler = {
+                  pitstops: 0,
+
+                  handlePitStop: function (lapData) {
+                    console.log("Pitstop at end of Lap #%d, fuel State remaining: %s", lapData.lapNumber, lapData.fuelState);
+                    this.pitstops++;
+                  }
+                };
 
                 $scope.sessiontime = function () {
                     return ($scope.sessiontimeminutes * 60);
@@ -106,6 +125,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     }
 
                     return $scope.numberOfLaps;
+                };
+
+                $scope.recalculate = function() {
+                  if($scope.lapsinsession && $scope.consumption>0) {
+                    fc = new ByLap.FuelCalculatorByLap(3, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
+                    fc.startRace();
+                  }
+                  console.log(pitStopHandler.lapData);
                 };
 
                 $scope.changeCalculationMode = function(value){
@@ -196,7 +223,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Fuel consumption per lap</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="consumption" ng-model="consumption"
+                            <input class="form-control" id="consumption" ng-model="consumption" ng-change="recalculate()"
                                    placeholder="Liters, Gallons, Kgs, etc">
                         </div>
                     </div>
