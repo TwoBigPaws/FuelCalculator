@@ -1,0 +1,32 @@
+{
+  "name": "iracing-fuelcalculator",
+  "version": "0.0.1",
+  "description": "Tool to calculate racing fuel strategies, particularly for iRacing",
+  "main": "index.html",
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-ui-grid": "^4.0.4",
+    "jasmine-core": "^2.5.2",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma": "^1.5.0",
+    "phantomjs-prebuilt": "^2.1.14"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twobigpaws/FuelCalculator.git"
+  },
+  "keywords": [
+    "iRacing"
+  ],
+  "author": "Andrew Barron",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/twobigpaws/FuelCalculator/issues"
+  },
+  "homepage": "https://github.com/twobigpaws/FuelCalculator#readme"
+}
