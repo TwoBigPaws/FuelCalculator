@@ -4,4 +4,4 @@
 /bower_components
 .idea
 *.iml
-test/unit.html
+test/units.html
