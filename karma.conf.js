@@ -37,7 +37,18 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'html'],
+
+    htmlReporter: {
+      outputFile: 'test/units.html',
+
+      // Optional
+      pageTitle: 'FuelCalculator UNit Tests',
+      subPageTitle: '',
+      groupSuites: true,
+      useCompactStyle: true,
+      useLegacyStyle: true
+    },
 
 
     // web server port
