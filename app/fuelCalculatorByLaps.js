@@ -1,4 +1,4 @@
-window.angular.module("FuelCalculators",[])
+angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
 
