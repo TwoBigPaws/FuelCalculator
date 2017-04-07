@@ -39,7 +39,7 @@ window.angular.module("FuelCalculators",[])
       this.pitstop = function () {
         //console.log("Pitstop at the end of Lap #%d, fuel remaining", this.lapNumber, this.fuelTank);
         this.pitStopHandler.handlePitStop(this.lapData());
-        this.fuelTank += this.fuelTankSize;
+        this.fuelTank = this.fuelTankSize;
       }
 
       this.startRace = function () {
