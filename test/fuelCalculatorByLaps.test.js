@@ -1,4 +1,5 @@
 describe('Calculator', function () {
+  const fuelTankSize = 3, expectedLaps = 20, fuelConsumptionPerLap = 0.605;
   var $ByLap;
 
   beforeEach(module("FuelCalculators"));
@@ -7,23 +8,31 @@ describe('Calculator', function () {
     $ByLap = _ByLap_;
   }));
 
-  it('should compute correct number of laps and pitstops', function () {
-    lapDataHandler = {
-      counter: 0,
-      handleData: function (lapData) {
-        this.counter++;
-      }
-    };
-    pitStopHandler = {
-      counter: 0, handlePitStop: function () {
-        this.counter++;
+  it('should handle no lapDapHandler correctly', function () {
 
-      }
-    };
-    fc = new $ByLap.FuelCalculatorByLap(3, 20, 0.605, lapDataHandler, pitStopHandler);
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, fuelConsumptionPerLap, undefined, {});
     fc.startRace();
-    expect(lapDataHandler.counter).toBe(21);
-    expect(pitStopHandler.counter).toBe(5);
+  });
+
+  it('should handle no pitStopHandler correctly', function () {
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, fuelConsumptionPerLap, {}, undefined);
+    fc.startRace();
+  });
+
+  it('should compute correct number of laps', function () {
+    lapDataHandler = {};
+    lapDataHandler.handleData = jasmine.createSpy("handleData");
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, fuelConsumptionPerLap, lapDataHandler, undefined);
+    fc.startRace();
+    expect(lapDataHandler.handleData.calls.count()).toBe(21);
+  });
+
+  it('should compute correct number of pitstops', function () {
+    pitStopHandler = {};
+    pitStopHandler.handlePitStop = jasmine.createSpy("handlePitStop");
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, fuelConsumptionPerLap, undefined, pitStopHandler);
+    fc.startRace();
+    expect(pitStopHandler.handlePitStop.calls.count()).toBe(5);
   });
 
 });

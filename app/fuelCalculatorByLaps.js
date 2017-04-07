@@ -18,7 +18,7 @@ angular.module("FuelCalculators",[])
 
       this.emitLap = function () {
         var lapData = this.lapData();
-        if (this.lapDataHandler.handleData) {
+        if (this.lapDataHandler &&  this.lapDataHandler.handleData) {
           this.lapDataHandler.handleData(lapData);
         }
       }
@@ -37,8 +37,9 @@ angular.module("FuelCalculators",[])
       }
 
       this.pitstop = function () {
-        //console.log("Pitstop at the end of Lap #%d, fuel remaining", this.lapNumber, this.fuelTank);
-        this.pitStopHandler.handlePitStop(this.lapData());
+        if(this.pitStopHandler && this.pitStopHandler.handlePitStop){
+          this.pitStopHandler.handlePitStop(this.lapData());
+        }
         this.fuelTank = this.fuelTankSize;
       }
 
