@@ -25,15 +25,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       heap.load("2890639018");
 </script>
 
-    <title>Fuel Calculator</title>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
-<script src="fuelCalculatorByLaps.js"></script>
+  <title>Fuel Calculator</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
 
+  <link data-require="ng-grid@2.0.14" data-semver="2.0.14" rel="stylesheet" href="http://cdn.rawgit.com/angular-ui/ng-grid/v2.0.14/ng-grid.css" />
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script data-require="jquery@2.0.3" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+
+  <script data-require="ng-grid@2.0.14" data-semver="2.0.14" src="http://cdn.rawgit.com/angular-ui/ng-grid/v2.0.14/build/ng-grid.js"></script>
+  <script data-require="ng-grid@2.0.14" data-semver="2.0.14" src="http://cdn.rawgit.com/angular-ui/ng-grid/v2.0.14/plugins/ng-grid-flexible-height.js"></script>
+
+
+
+  <script src="fuelCalculatorByLaps.js"></script>
 
 
 <style type="text/css">
@@ -65,6 +74,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .nav-tabs {
         margin-bottom: 10px;
     }
+
+    .gridStyle {
+      border: 1px solid rgb(212,212,212);
+      width: 400px;
+      height: 300px
+    }
 </style>
 
 <script>
@@ -76,7 +91,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap', "FuelCalculators"])
+  angular.module("CalcApp", ['ui.bootstrap','ngGrid','FuelCalculators'])
     .controller("CalcCtrl", function ($scope, ByLap) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
@@ -85,22 +100,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.lapseconds;
                 $scope.totaltanksize = 90;
                 $scope.tankpercentstart = 60;
-                $scope.consumptionperminute;
                 $scope.byTimePresentation = true;
 
+                $scope.laps = [];
+                $scope.pit = [];
+
+                $scope.gridOptions = { data: 'laps' };
+
+
                 var lapDataHandler = {
-                  lapData: [],
                   handleData: function (lapData) {
-                    this.lapData.push(lapData);
+                    $scope.laps.push(lapData);
                   }
                 };
 
                 var pitStopHandler = {
-                  pitstops: 0,
 
                   handlePitStop: function (lapData) {
-                    console.log("Pitstop at end of Lap #%d, fuel State remaining: %s", lapData.lapNumber, lapData.fuelState);
-                    this.pitstops++;
+                    $scope.pit.push(lapData);
                   }
                 };
 
@@ -128,6 +145,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 $scope.recalculate = function() {
+                  $scope.laps = [];
+                  $scope.pit = []
                   if($scope.lapsinsession && $scope.consumption>0) {
                     fc = new ByLap.FuelCalculatorByLap(3, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
                     fc.startRace();
@@ -143,23 +162,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return $scope.lapsinsession() * $scope.consumption;
                 };
 
-                $scope.consumptionperminute = function () {
-                    var consumptionpersecond = $scope.consumption / $scope.singlelaptime();
-                    return consumptionpersecond * 60;
-                };
-
                 $scope.maxstintlength = function () {
                     return $scope.consumption * $scope.startingfuel();
                 };
 
                 $scope.startingfuel = function () {
                     return $scope.totaltanksize * ($scope.tankpercentstart / 100);
-                };
-
-                $scope.alertMe = function () {
-                    setTimeout(function () {
-                        $window.alert('You\'ve selected the alert tab!');
-                    });
                 };
 
                 $scope.model = {
@@ -227,6 +235,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                    placeholder="Liters, Gallons, Kgs, etc">
                         </div>
                     </div>
+
+
+                  <div class="gridStyle" ng-grid="gridOptions"></div>
+
+                  <table class="table">
+                    <thead><td>Lap #</><th>Fuel State at end of Lap #</td></thead>
+                    <tr ng-repeat="lap in laps">
+                      <td>{{ lap.lapNumber | number }}</td>
+                      <td>{{ lap.fuelState | number:2 }}</td>
+                    </tr>
+                  </table>
+                  <table class="table">
+                    <tr><th>Pitstop at end of Lap #</th><th>Fuel State at end of Lap</th></tr>
+                    <tr ng-repeat="pit in pit">
+                      <td>{{ pit.lapNumber | number }}</td>
+                      <td>{{ pit.fuelState | number:2 }}</td>
+                    </tr>
+                  </table>
                 </form>
             </div>
             <div class="panel-footer">
