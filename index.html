@@ -147,6 +147,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   }
                 };
 
+                $scope.validData = function(){
+                    return $scope.laps.length >0;
+                }
+
                 $scope.changeCalculationMode = function(value){
                     $scope.byTimePresentation = value;
                 };
@@ -230,11 +234,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </form>
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer" ng-show="validData()">
                 <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
                 <p><small>Your race should be {{lapsinsession() | number}} laps</small></p>
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer" ng-show="validData()">
               <table class="table">
                 <tr><th>Pitstop at end of Lap #</th><th>Fuel State at end of Lap</th></tr>
                 <tr ng-repeat="pit in pit">
@@ -243,7 +247,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </tr>
               </table>
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer" ng-show="validData()">
               <table class="table">
                 <thead><th>Lap #</th><th>Fuel State at end of Lap #</th></thead>
                 <tr ng-repeat="lap in laps">
