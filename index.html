@@ -29,6 +29,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="node_modules/angular/angular.js"></script>
   <script src="node_modules/angular-animate/angular-animate.min.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+  <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+  <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
 
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
 
@@ -89,7 +91,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate'])
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate','chart.js'])
     .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
@@ -153,13 +155,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   $scope.gridOptions1.data = [];
                   $scope.laps = [];
                   $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+                  $scope.chart.labels = [];
+                  $scope.chart.data = [[]];
                 };
+
+                $scope.updateChart = function () {
+                  for(var lap in $scope.laps) {
+                    $scope.chart.labels.push($scope.laps[lap].lapNumber);
+                    $scope.chart.data[0].push($scope.laps[lap].fuelState);
+                  }
+                }
 
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
                   if($scope.lapsinsession && $scope.consumption>0) {
                     fc = new ByLap.FuelCalculatorByLap($scope.totaltanksize, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
                     fc.startRace();
+                  }
+                  if($scope.validData()){
+                    $scope.updateChart();
                   }
                 };
 
@@ -186,6 +200,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.model = {
                     name: 'Tabs'
                 };
+
+                $scope.chart = {
+                    labels: [],
+                    series: ['Laps'],
+                    data: [
+                        []
+                    ],
+                    datasetOverride: [{ yAxisID: 'y-axis-1' }],
+                    options: {
+                    scales: {
+                      yAxes: [
+                        {
+                          id: 'y-axis-1',
+                          type: 'linear',
+                          display: true,
+                          position: 'left'
+                        }
+                      ]
+                      }
+                    }
+                };
+
+
             }]);
 
 </script>
@@ -262,6 +299,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           <div class="panel-footer" ng-show="validData()">
             <div class="myGrid" id="pitStopGrid" ui-grid="gridOptions1"></div>
+          </div>
+          <div id="lapChart" class="panel-footer" ng-show="validData()">
+            <canvas id="line" class="chart chart-line" chart-data="chart.data"
+                    chart-labels="chart.labels" chart-series="chart.series" chart-options="chart.options"
+                    chart-dataset-override="chart.datasetOverride" >
+            </canvas>
           </div>
         </div>
         I'd love your feedback.
