@@ -187,8 +187,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <form class="form-horizontal">
                     <ul class="nav nav-tabs">
-                        <li role="presentation" ng-class="{active: byTimePresentation}"><a ng-click="changeCalculationMode(true)">Time</a></li>
-                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a ng-click="changeCalculationMode(false)">Lap</a></li>
+                        <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab" ng-click="changeCalculationMode(true)">Time</a></li>
+                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab" ng-click="changeCalculationMode(false)">Lap</a></li>
                     </ul>
                     <div class="form-group">
                       <label class="col-sm-4 control-label">Tank Size</label>
