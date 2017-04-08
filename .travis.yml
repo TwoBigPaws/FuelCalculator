@@ -3,3 +3,5 @@ node_js:
   - "4"
 install:
   - npm rebuild
+script: node_modules/karma/bin/karma start karma.conf.js --single-run
+
