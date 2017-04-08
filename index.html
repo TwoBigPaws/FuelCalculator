@@ -29,7 +29,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="node_modules/angular/angular.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 
+  <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+
   <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="styleSheet" href="node_modules/angular-ui-grid/ui-grid.min.css"/>
 
   <script src="app/fuelCalculatorByLaps.js"></script>
 
@@ -69,6 +72,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       width: 400px;
       height: 300px
     }
+
+    .myGrid {
+      width: 500px;
+      height: 250px;
+    }
 </style>
 
 <script>
@@ -80,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators'])
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid'])
     .controller("CalcCtrl", function ($scope, ByLap) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
@@ -93,7 +101,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.laps = [];
                 $scope.pit = [];
-
 
                 var lapDataHandler = {
                   handleData: function (lapData) {
@@ -237,25 +244,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
                 <p><small>Your race should be {{lapsinsession() | number}} laps</small></p>
             </div>
-            <div class="panel-footer" ng-show="validData()">
-              <table class="table">
-                <tr><th>Pitstop at end of Lap #</th><th>Fuel State at end of Lap</th></tr>
-                <tr ng-repeat="pit in pit">
-                  <td>{{ pit.lapNumber | number }}</td>
-                  <td>{{ pit.fuelState | number:2 }}</td>
-                </tr>
-              </table>
-            </div>
-            <div class="panel-footer" ng-show="validData()">
-              <table class="table">
-                <thead><th>Lap #</th><th>Fuel State at end of Lap #</th></thead>
-                <tr ng-repeat="lap in laps">
-                  <td>{{ lap.lapNumber | number }}</td>
-                  <td>{{ lap.fuelState | number:2 }}</td>
-                </tr>
-              </table>
-            </div>
-
+          <div class="panel-footer" ng-show="validData()">
+            <div ui-grid="{ data: pit }" class="myGrid"></div>
+          </div>
         </div>
         I'd love your feedback.
         <br>
