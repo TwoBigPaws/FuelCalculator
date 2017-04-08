@@ -104,6 +104,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.gridOptions1 = {
                   enableSorting: false,
+                  columnDefs: [{field: 'lapNumber', displayName: 'Pit @ End of Lap #', cellFilter:"number", width:"*"},
+                    {field: 'fuelState', displayName: 'Fuel State @ End of Lap', cellFilter:"number", width:"*"}],
+
                   data: [],
                   onRegisterApi: function (gridApi) {
                     $scope.grid1Api = gridApi;
