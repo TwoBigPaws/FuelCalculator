@@ -35,4 +35,20 @@ describe('Calculator', function () {
     expect(pitStopHandler.handlePitStop.calls.count()).toBe(5);
   });
 
+  it('should not run any laps with 0 fuel tank consumption', function () {
+    lapDataHandler = {};
+    lapDataHandler.handleData = jasmine.createSpy("handleData");
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, 0, lapDataHandler, undefined);
+    fc.startRace();
+    expect(lapDataHandler.handleData.calls.count()).toBe(0);
+  });
+
+  it('should not run any laps with 0 expectedLaps', function () {
+    lapDataHandler = {};
+    lapDataHandler.handleData = jasmine.createSpy("handleData");
+    fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, 0, fuelConsumptionPerLap, lapDataHandler, undefined);
+    fc.startRace();
+    expect(lapDataHandler.handleData.calls.count()).toBe(0);
+  });
+
 });

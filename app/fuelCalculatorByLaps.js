@@ -44,7 +44,7 @@ angular.module("FuelCalculators",[])
       }
 
       this.startRace = function () {
-        if (this.fuelConsumptionPerLap > 0) {
+        if (this.fuelConsumptionPerLap > 0 && !this.raceCompleted()) {
           this.emitLap();
           while (!this.raceCompleted()) {
             this.doLap();
