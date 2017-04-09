@@ -141,7 +141,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         var laps = $scope.sessiontime() / $scope.singlelaptime();
                         var lapCount = Math.ceil(laps);
                         var remainder = lapCount - laps;
-                        console.log("remainder", remainder);
                         if (remainder < 0.3) {
                             lapCount = lapCount + 1;
                         }
