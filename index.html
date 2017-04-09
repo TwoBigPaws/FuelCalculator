@@ -209,20 +209,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     ],
                     datasetOverride: [{ yAxisID: 'y-axis-1' }],
                     options: {
-                    scales: {
-                      yAxes: [
-                        {
-                          id: 'y-axis-1',
-                          type: 'linear',
-                          display: true,
-                          position: 'left'
-                        }
-                      ]
+                      title: {
+                        display: true,
+                        text: 'Lap / Fuel Chart'
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            id: 'y-axis-1',
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                              beginAtZero:true
+                            },
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Fuel State'
+                            }
+                          }
+                        ],
+                        xAxes: [{
+                          scaleLabel: {
+                              display: true,
+                              labelString: "Lap #"
+
+                          }
+                        }]
                       }
                     }
                 };
-
-
             }]);
 
 </script>
