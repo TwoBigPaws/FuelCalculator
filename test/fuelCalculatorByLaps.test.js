@@ -40,7 +40,7 @@ describe('Calculator', function () {
     pitStopHandler.handlePitStop = jasmine.createSpy("handlePitStop");
     fc = new $ByLap.FuelCalculatorByLap(10, 10, 2, undefined, pitStopHandler);
     fc.startRace();
-    expect(pitStopHandler.handlePitStop.calls.first()).toEqual({object: pitStopHandler, args: [{lapNumber:5, fuelState:0, fuelAdded:10}], returnValue: undefined});
+    expect(pitStopHandler.handlePitStop.calls.first()).toEqual({object: pitStopHandler, args: [{lapNumber:5, fuelState:0, fuelAdded:10, fuelStateOnExit:10}], returnValue: undefined});
 
   });
 

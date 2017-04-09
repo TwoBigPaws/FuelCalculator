@@ -37,12 +37,14 @@ angular.module("FuelCalculators",[])
       }
 
       this.pitstop = function () {
+        newFuelTank = this.fuelTankSize;
         if(this.pitStopHandler && this.pitStopHandler.handlePitStop){
           lapData = this.lapData();
           lapData.fuelAdded = this.fuelTankSize - this.fuelTank;
+          lapData.fuelStateOnExit = newFuelTank;
           this.pitStopHandler.handlePitStop(lapData);
         }
-        this.fuelTank = this.fuelTankSize;
+        this.fuelTank = newFuelTank;
       }
 
       this.startRace = function () {
