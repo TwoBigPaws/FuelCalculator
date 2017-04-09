@@ -25,18 +25,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       heap.load("2890639018");
 </script>
 
-    <title>Fuel Calculator</title>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-touch.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <title>Fuel Calculator</title>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+  <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+  <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+  <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
+  <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="styleSheet" href="node_modules/angular-ui-grid/ui-grid.min.css"/>
+
+  <script src="app/fuelCalculatorByLaps.js"></script>
+
 
 <style type="text/css">
     body {
         background: url("fuel.png");
-        background-size: cover;
+        //background-size: cover;
     }
 
     .jumbotron {
@@ -62,6 +69,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .nav-tabs {
         margin-bottom: 10px;
     }
+
+    .gridStyle {
+      border: 1px solid rgb(212,212,212);
+      width: 400px;
+      height: 300px
+    }
+
+    .myGrid {
+      width: 500px;
+      height: 250px;
+    }
 </style>
 
 <script>
@@ -73,8 +91,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-    angular.module("CalcApp", ['ui.bootstrap'])
-            .controller("CalcCtrl", function ($scope) {
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate','chart.js'])
+    .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
                 $scope.sessiontime;
@@ -82,8 +100,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.lapseconds;
                 $scope.totaltanksize = 90;
                 $scope.tankpercentstart = 60;
-                $scope.consumptionperminute;
                 $scope.byTimePresentation = true;
+
+                $scope.laps = [];
+
+                $scope.gridOptions1 = {
+                  enableSorting: false,
+                  columnDefs: [{field: 'lapNumber', displayName: 'Pit @ End of Lap #', cellFilter:"number", width:"*"},
+                    {field: 'fuelState', displayName: 'Fuel State @ End of Lap', cellFilter:"number", width:"*"}],
+
+                  data: [],
+                  onRegisterApi: function (gridApi) {
+                    $scope.grid1Api = gridApi;
+                  }
+                };
+
+                var lapDataHandler = {
+                  handleData: function (lapData) {
+                    $scope.laps.push(lapData);
+                  }
+                };
+
+                var pitStopHandler = {
+
+                  handlePitStop: function (lapData) {
+                    $scope.gridOptions1.data.push(lapData);
+                  }
+                };
 
                 $scope.sessiontime = function () {
                     return ($scope.sessiontimeminutes * 60);
@@ -98,7 +141,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         var laps = $scope.sessiontime() / $scope.singlelaptime();
                         var lapCount = Math.ceil(laps);
                         var remainder = lapCount - laps;
-                        console.log("remainder", remainder);
                         if (remainder < 0.3) {
                             lapCount = lapCount + 1;
                         }
@@ -108,17 +150,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return $scope.numberOfLaps;
                 };
 
+                $scope.clearTableData = function () {
+                  $scope.gridOptions1.data = [];
+                  $scope.laps = [];
+                  $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+                  $scope.chart.labels = [];
+                  $scope.chart.data = [[]];
+                };
+
+                $scope.updateChart = function () {
+                  for(var lap in $scope.laps) {
+                    $scope.chart.labels.push($scope.laps[lap].lapNumber);
+                    $scope.chart.data[0].push($scope.laps[lap].fuelState);
+                  }
+                }
+
+                $scope.recalculateLapData = function() {
+                  $scope.clearTableData();
+                  if($scope.lapsinsession && $scope.consumption>0) {
+                    fc = new ByLap.FuelCalculatorByLap($scope.totaltanksize, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
+                    fc.startRace();
+                  }
+                  if($scope.validData()){
+                    $scope.updateChart();
+                  }
+                };
+
+                $scope.validData = function(){
+                    return $scope.laps.length > 0;
+                }
+
                 $scope.changeCalculationMode = function(value){
                     $scope.byTimePresentation = value;
                 };
 
                 $scope.fuelneededinsession = function () {
                     return $scope.lapsinsession() * $scope.consumption;
-                };
-
-                $scope.consumptionperminute = function () {
-                    var consumptionpersecond = $scope.consumption / $scope.singlelaptime();
-                    return consumptionpersecond * 60;
                 };
 
                 $scope.maxstintlength = function () {
@@ -129,16 +196,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return $scope.totaltanksize * ($scope.tankpercentstart / 100);
                 };
 
-                $scope.alertMe = function () {
-                    setTimeout(function () {
-                        $window.alert('You\'ve selected the alert tab!');
-                    });
-                };
-
                 $scope.model = {
                     name: 'Tabs'
                 };
-            });
+
+                $scope.chart = {
+                    labels: [],
+                    series: ['Fuel'],
+                    data: [
+                        []
+                    ],
+                    datasetOverride: [{ yAxisID: 'y-axis-1' }],
+                    options: {
+                      title: {
+                        display: true,
+                        text: 'Lap / Fuel Chart'
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            id: 'y-axis-1',
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                              beginAtZero:true
+                            },
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Fuel State'
+                            }
+                          }
+                        ],
+                        xAxes: [{
+                          scaleLabel: {
+                              display: true,
+                              labelString: "Lap #"
+
+                          }
+                        }]
+                      }
+                    }
+                };
+            }]);
 
 </script>
 
@@ -162,14 +262,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <form class="form-horizontal">
                     <ul class="nav nav-tabs">
-                        <li role="presentation" ng-class="{active: byTimePresentation}"><a ng-click="changeCalculationMode(true)">Time</a></li>
-                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a ng-click="changeCalculationMode(false)">Lap</a></li>
+                        <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab" ng-click="changeCalculationMode(true)">Time</a></li>
+                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab" ng-click="changeCalculationMode(false)">Lap</a></li>
                     </ul>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">Tank Size</label>
+                      <div class="col-sm-8">
+                        <input class="form-control" type="number" ng-model="totaltanksize" placeholder="Total Tank Size" ng-change="recalculateLapData()">
+                      </div>
+                    </div>
 
                     <div class="form-group" ng-show="!byTimePresentation">
                         <label class="col-sm-4 control-label">Laps</label>
                         <div class="col-sm-8">
-                            <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number Of Laps">
+                            <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number Of Laps" ng-change="recalculateLapData()">
                         </div>
                     </div>
                     <div class="form-group" ng-show="byTimePresentation">
@@ -196,19 +302,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Fuel consumption per lap</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="consumption" ng-model="consumption"
+                            <input class="form-control" id="consumption" ng-model="consumption" ng-change="recalculateLapData()"
                                    placeholder="Liters, Gallons, Kgs, etc">
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer" ng-show="validData()">
                 <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>
-                <p>
-                    <small>Your race should be {{lapsinsession() | number}} laps</small>
-                </p>
-
+                <p><small>Your race should be {{lapsinsession() | number}} laps</small></p>
             </div>
+          <div class="panel-footer" ng-show="validData()">
+            <div class="myGrid" id="pitStopGrid" ui-grid="gridOptions1"></div>
+          </div>
+          <div id="lapChart" class="panel-footer" ng-show="validData()">
+            <canvas id="line" class="chart chart-line" chart-data="chart.data"
+                    chart-labels="chart.labels" chart-series="chart.series" chart-options="chart.options"
+                    chart-dataset-override="chart.datasetOverride" >
+            </canvas>
+          </div>
         </div>
         I'd love your feedback.
         <br>

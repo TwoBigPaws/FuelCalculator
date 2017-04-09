@@ -1,0 +1,7 @@
+/dist
+/.tmp
+/.sass-cache
+/bower_components
+.idea
+*.iml
+test/units.html
