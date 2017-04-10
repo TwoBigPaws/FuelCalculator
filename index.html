@@ -77,7 +77,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .myGrid {
       width: 500px;
-      height: 250px;
+      height: 100px;
     }
 </style>
 
@@ -105,8 +105,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.gridOptions1 = {
                   enableSorting: false,
-                  columnDefs: [{field: 'lapNumber', displayName: 'Pit @ End of Lap #', cellFilter:"number", width:"*"},
-                    {field: 'fuelState', displayName: 'Fuel State @ End of Lap', cellFilter:"number", width:"*"}],
+                  columnDefs: [
+                      {field: 'lapNumber', displayName:"Lap #", headerTooltip: 'Pit at end of Lap #', cellFilter:"number", width:"10%"},
+                      {field: 'fuelState', headerTooltip: 'Fuel State entering Pits', cellFilter:"number", width:"30%"},
+                      {field: 'fuelAdded', headerTooltip: 'Fuel to add during Pitstop', cellFilter:"number", width:"30%"},
+                      {field: 'fuelStateOnExit', headerTooltip: 'Fuel state leaving pits', cellFilter:"number", width:"30%"}
+                      ],
 
                   data: [],
                   onRegisterApi: function (gridApi) {
