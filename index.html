@@ -106,9 +106,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.gridOptions1 = {
                   enableSorting: false,
                   columnDefs: [
-                      {field: 'lapNumber', displayName:"Lap #", headerTooltip: 'Pit at end of Lap #', cellFilter:"number", width:"10%"},
-                      {field: 'fuelState', headerTooltip: 'Fuel State entering Pits', cellFilter:"number", width:"30%"},
-                      {field: 'fuelAdded', headerTooltip: 'Fuel to add during Pitstop', cellFilter:"number", width:"30%"},
+                      {field: 'lapNumber', displayName:"Lap #", headerTooltip: 'Pit at end of Lap #', cellFilter:"number", width:"20%"},
+                      {field: 'fuelState', headerTooltip: 'Fuel State entering Pits', cellFilter:"number", width:"25%"},
+                      {field: 'fuelAdded', headerTooltip: 'Fuel to add during Pitstop', cellFilter:"number", width:"25%"},
                       {field: 'fuelStateOnExit', headerTooltip: 'Fuel state leaving pits', cellFilter:"number", width:"30%"}
                       ],
 
@@ -158,14 +158,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   $scope.laps = [];
                   $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
                   $scope.chart.labels = [];
-                  $scope.chart.data = [[]];
+                  $scope.chart.data = [[],[]];
                 };
 
                 $scope.updateChart = function () {
-                  for(var lap in $scope.laps) {
+                  for (var lap in $scope.laps) {
                     $scope.chart.labels.push($scope.laps[lap].lapNumber);
                     $scope.chart.data[0].push($scope.laps[lap].fuelState);
+                    $scope.chart.data[1].push(NaN);
                   }
+                  // now replace the NaN of each Lap for the 2nd series (pitstops)
+                  // with the actual Fuel Added
+                  for (var pitStop in $scope.gridOptions1.data) {
+                    const pitStopData = $scope.gridOptions1.data[pitStop];
+                    $scope.chart.data[1][pitStopData.lapNumber] = pitStopData.fuelState;
+                  }
+
                 }
 
                 $scope.recalculateLapData = function() {
@@ -204,13 +212,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 $scope.chart = {
-                    labels: [],
-                    series: ['Fuel'],
+                  labels: [],
+                  colors: [
+                    '#97BBCD', // blue
+                    '#F7464A', // red
+                    '#DCDCDC', // light grey
+                    '#46BFBD', // green
+                    '#FDB45C', // yellow
+                    '#949FB1', // grey
+                    '#4D5360'  // dark grey
+                  ],
+                  series: ['Fuel State','Fuel entering Pits'],
                     data: [
-                        []
+                        [],[]
                     ],
-                    datasetOverride: [{ yAxisID: 'y-axis-1' }],
+                    datasetOverride: [{ yAxisID: 'y-axis-1' }, {yAxisID: 'y-axis-1'}],
                     options: {
+                      showLines: true,
                       title: {
                         display: true,
                         text: 'Lap / Fuel Chart'
@@ -321,6 +339,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div id="lapChart" class="panel-footer" ng-show="validData()">
             <canvas id="line" class="chart chart-line" chart-data="chart.data"
                     chart-labels="chart.labels" chart-series="chart.series" chart-options="chart.options"
+                    chart-colors="chart.colors"
                     chart-dataset-override="chart.datasetOverride" >
             </canvas>
           </div>
