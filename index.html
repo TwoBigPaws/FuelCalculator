@@ -191,8 +191,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return $scope.laps.length > 0;
                 }
 
+                $scope.resetForm = function(){
+                  $scope.clearTableData();
+                  $scope.consumption=null;
+                  $scope.sessiontimeminutes = null;
+                  $scope.sessiontime = null;
+                  $scope.lapminutes = null;
+                  $scope.lapseconds = null;
+                  $scope.numberOfLaps = null;
+                  $scope.totaltanksize = null;
+                };
+
                 $scope.changeCalculationMode = function(value){
                     $scope.byTimePresentation = value;
+                    $scope.resetForm();
                 };
 
                 $scope.fuelneededinsession = function () {
