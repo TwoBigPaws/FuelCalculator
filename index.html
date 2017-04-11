@@ -94,7 +94,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
                 $scope.consumption;
                 $scope.sessiontimeminutes;
-                $scope.sessiontime;
                 $scope.lapminutes;
                 $scope.lapseconds;
                 $scope.totaltanksize;
@@ -179,7 +178,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
                   if($scope.lapsinsession && $scope.consumption>0) {
-                    fc = new ByLap.FuelCalculatorByLap($scope.totaltanksize, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
+                    var fuelParameters = {maximumFuel: $scope.totaltanksize};
+                    fc = new ByLap.FuelCalculatorByLap(fuelParameters, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
                   if($scope.validData()){
@@ -195,7 +195,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   $scope.clearTableData();
                   $scope.consumption=null;
                   $scope.sessiontimeminutes = null;
-                  $scope.sessiontime = null;
                   $scope.lapminutes = null;
                   $scope.lapseconds = null;
                   $scope.numberOfLaps = null;
