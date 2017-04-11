@@ -4,11 +4,11 @@ describe('FuelCalculator By Lap', function() {
 
     element(by.id('byLapTab')).click();
 
-    element(by.model('consumption')).isDisplayed();
+    element(by.model('fuelTank.consumption')).isDisplayed();
 
-    element(by.model('totaltanksize')).clear().sendKeys('3');
+    element(by.model('fuelTank.maximumFuel')).clear().sendKeys('3');
     element(by.model('numberOfLaps')).sendKeys('20');
-    element(by.model('consumption')).sendKeys('0.605');
+    element(by.model('fuelTank.consumption')).sendKeys('0.605');
 
 
     // really need to use the gridTest but not sure how to include that library in there yett..
@@ -28,13 +28,13 @@ describe('FuelCalculator By Time', function() {
 
     element(by.id('byTimeTab')).click();
 
-    element(by.model('consumption')).isDisplayed();
+    element(by.model('fuelTank.consumption')).isDisplayed();
 
     element(by.model('sessiontimeminutes')).sendKeys('40');
     element(by.model('lapminutes')).sendKeys('2');
     element(by.model('lapseconds')).sendKeys('47');
-    element(by.model('consumption')).sendKeys('2.69');
-    element(by.model('totaltanksize')).clear().sendKeys('90');
+    element(by.model('fuelTank.consumption')).sendKeys('2.69');
+    element(by.model('fuelTank.maximumFuel')).clear().sendKeys('90');
 
 
     // really need to use the gridTest but not sure how to include that library in there yett..

@@ -92,12 +92,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate','chart.js'])
     .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
-                $scope.consumption;
+
+                // TODO this will need to be shared somewhere..
+                function FuelTank() {
+                  return {
+                    consumption: undefined,
+                    maximumFuel: undefined,
+                    initialFuel: undefined,
+                    tankpercentstart: 60
+                  };
+                }
+
+                $scope.fuelTank = new FuelTank();
+
+
                 $scope.sessiontimeminutes;
                 $scope.lapminutes;
                 $scope.lapseconds;
-                $scope.totaltanksize;
-                $scope.tankpercentstart = 60;
                 $scope.byTimePresentation = true;
 
                 $scope.laps = [];
@@ -124,7 +135,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 var pitStopHandler = {
-
                   handlePitStop: function (lapData) {
                     $scope.gridOptions1.data.push(lapData);
                   }
@@ -177,9 +187,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
-                  if($scope.lapsinsession && $scope.consumption>0) {
-                    var fuelParameters = {maximumFuel: $scope.totaltanksize};
-                    fc = new ByLap.FuelCalculatorByLap(fuelParameters, $scope.lapsinsession(), $scope.consumption, lapDataHandler, pitStopHandler);
+                  if($scope.lapsinsession && $scope.fuelTank.consumption>0) {
+                    fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), $scope.fuelTank.consumption, lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
                   if($scope.validData()){
@@ -193,12 +202,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.resetForm = function(){
                   $scope.clearTableData();
-                  $scope.consumption=null;
                   $scope.sessiontimeminutes = null;
                   $scope.lapminutes = null;
                   $scope.lapseconds = null;
                   $scope.numberOfLaps = null;
-                  $scope.totaltanksize = null;
+                  $scope.fuelTank = new FuelTank();
                 };
 
                 $scope.changeCalculationMode = function(value){
@@ -207,15 +215,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 $scope.fuelneededinsession = function () {
-                    return $scope.lapsinsession() * $scope.consumption;
+                    return $scope.lapsinsession() * $scope.fuelTank.consumption;
                 };
 
                 $scope.maxstintlength = function () {
-                    return $scope.consumption * $scope.startingfuel();
+                    return $scope.fuelTank.consumption * $scope.startingfuel();
                 };
 
                 $scope.startingfuel = function () {
-                    return $scope.totaltanksize * ($scope.tankpercentstart / 100);
+                    return $scope.totaltanksize * ($scope.fuelTank.tankpercentstart / 100);
                 };
 
                 $scope.model = {
@@ -300,7 +308,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="form-group">
                       <label class="col-sm-4 control-label">Tank Size</label>
                       <div class="col-sm-8">
-                        <input class="form-control" type="number" ng-model="totaltanksize" placeholder="Total Tank Size" ng-change="recalculateLapData()">
+                        <input class="form-control" type="number" ng-model="fuelTank.maximumFuel" placeholder="Maximum Tank Size" ng-change="recalculateLapData()">
                       </div>
                     </div>
 
@@ -334,7 +342,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Fuel consumption per lap</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="consumption" ng-model="consumption" ng-change="recalculateLapData()"
+                            <input class="form-control" id="consumption" ng-model="fuelTank.consumption" ng-change="recalculateLapData()"
                                    placeholder="Liters, Gallons, Kgs, etc">
                         </div>
                     </div>
