@@ -26,7 +26,7 @@ angular.module("FuelCalculators",[])
         this.lapsRemaining--;
         this.lapNumber++;
         this.fuelTank -= this.fuelConsumptionPerLap;
-        if (this.fuelTank < fuelConsumptionPerLap) {
+        if (this.fuelTank < fuelConsumptionPerLap && this.lapsRemaining > 0) {
           this.pitstop();
         }
         this.emitLap();

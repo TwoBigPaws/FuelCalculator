@@ -34,7 +34,7 @@ describe('Calculator', function () {
     pitStopHandler.handlePitStop = jasmine.createSpy("handlePitStop");
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankSize, expectedLaps, fuelConsumptionPerLap, undefined, pitStopHandler);
     fc.startRace();
-    expect(pitStopHandler.handlePitStop.calls.count()).toBe(5);
+    expect(pitStopHandler.handlePitStop.calls.count()).toBe(4);
   });
 
   it('Pitstop event should indicate how much fuel was put in', function () {
@@ -79,10 +79,6 @@ describe('Calculator', function () {
     var fc = new $ByLap.FuelCalculatorByLap(9.7, 16, 0.605, undefined, pitStopHandler);
     fc.startRace();
     expect(pitStopHandler.numPitstops).toBe(0);
-    // TODO test suggested fuel is only 1 lap's worth
-    expect(pitStopHandler.fuelAdded).toEqual(0.605);
-
-
   });
 
 });
