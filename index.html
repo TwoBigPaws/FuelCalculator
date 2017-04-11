@@ -188,7 +188,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
                   if($scope.lapsinsession && $scope.fuelTank.consumption>0) {
-                    fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), $scope.fuelTank.consumption, lapDataHandler, pitStopHandler);
+                    fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
                   if($scope.validData()){
@@ -223,7 +223,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 $scope.startingfuel = function () {
-                    return $scope.totaltanksize * ($scope.fuelTank.tankpercentstart / 100);
+                    return $scope.fuelTank.maximumFuel * ($scope.fuelTank.tankpercentstart / 100);
                 };
 
                 $scope.model = {

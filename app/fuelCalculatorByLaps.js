@@ -4,11 +4,11 @@ angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
 
-    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, fuelConsumptionPerLap, lapDataHandler, pitStopHandler) {
+    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, lapDataHandler, pitStopHandler) {
       this.fuelTankAttributes = fuelTankAttributes;
       this.fuelTank = fuelTankAttributes.initialFuel ? fuelTankAttributes.initialFuel : fuelTankAttributes.maximumFuel;
+
       this.lapsRemaining = numLaps;
-      this.fuelConsumptionPerLap = fuelConsumptionPerLap;
       this.lapNumber = 0;
       this.lapDataHandler = lapDataHandler;
       this.pitStopHandler = pitStopHandler;
@@ -28,8 +28,8 @@ angular.module("FuelCalculators",[])
       this.doLap = function () {
         this.lapsRemaining--;
         this.lapNumber++;
-        this.fuelTank -= this.fuelConsumptionPerLap;
-        if (this.fuelTank < fuelConsumptionPerLap && this.lapsRemaining > 0) {
+        this.fuelTank -= this.fuelTankAttributes.consumption;
+        if (this.fuelTank < this.fuelTankAttributes.consumption && this.lapsRemaining > 0) {
           this.pitstop();
         }
         this.emitLap();
@@ -51,7 +51,7 @@ angular.module("FuelCalculators",[])
       };
 
       this.startRace = function () {
-        if (this.fuelConsumptionPerLap > 0 && !this.raceCompleted()) {
+        if (this.fuelTankAttributes.consumption > 0 && !this.raceCompleted()) {
           this.emitLap();
           while (!this.raceCompleted()) {
             this.doLap();
