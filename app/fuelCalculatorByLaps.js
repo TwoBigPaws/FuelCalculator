@@ -1,3 +1,5 @@
+"use strict"
+
 angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
@@ -14,14 +16,15 @@ angular.module("FuelCalculators",[])
 
       this.lapData = function () {
         return {lapNumber: this.lapNumber, fuelState: this.fuelTank};
-      }
+      };
 
       this.emitLap = function () {
         var lapData = this.lapData();
         if (this.lapDataHandler &&  this.lapDataHandler.handleData) {
           this.lapDataHandler.handleData(lapData);
         }
-      }
+      };
+
       this.doLap = function () {
         this.lapsRemaining--;
         this.lapNumber++;
@@ -30,22 +33,22 @@ angular.module("FuelCalculators",[])
           this.pitstop();
         }
         this.emitLap();
-      }
+      };
 
       this.raceCompleted = function () {
-        return this.lapsRemaining == 0;
-      }
+        return this.lapsRemaining === 0;
+      };
 
       this.pitstop = function () {
-        newFuelTank = this.fuelTankSize;
+        var newFuelTank = this.fuelTankSize;
         if(this.pitStopHandler && this.pitStopHandler.handlePitStop){
-          lapData = this.lapData();
+          var lapData = this.lapData();
           lapData.fuelAdded = this.fuelTankSize - this.fuelTank;
           lapData.fuelStateOnExit = newFuelTank;
           this.pitStopHandler.handlePitStop(lapData);
         }
         this.fuelTank = newFuelTank;
-      }
+      };
 
       this.startRace = function () {
         if (this.fuelConsumptionPerLap > 0 && !this.raceCompleted()) {
@@ -54,6 +57,6 @@ angular.module("FuelCalculators",[])
             this.doLap();
           }
         }
-      }
-    }
+      };
+    };
   });
