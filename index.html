@@ -155,7 +155,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 };
 
                 $scope.lapsinsession = function () {
-                    if ($scope.byTimePresentation){
+                    if ($scope.byTimePresentation && $scope.lapTimeValidator($scope.laptime)){
                         var laps = $scope.sessiontime() / $scope.laptimeInSeconds;
                         var lapCount = Math.ceil(laps);
                         var remainder = lapCount - laps;
@@ -193,7 +193,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
-                  if($scope.lapsinsession() && $scope.fuelTank.validTank()) {
+                  if($scope.lapsinsession()>0 && $scope.fuelTank.validTank()) {
                     fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
@@ -346,7 +346,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="form-group" ng-show="byTimePresentation">
                         <label class="col-sm-4 control-label">Lap Time</label>
                         <div class="col-sm-8">
-                            <input class="form-control" type="text" name="laptime" ng-model="laptime" placeholder="Laptime in mm:ss.SSS" validator="lapTimeValidator(laptime) === true"
+                            <input class="form-control" type="text" name="laptime" ng-model="laptime" placeholder="Laptime in mm:ss.SSS" validator="lapTimeValidator(laptime) === true" ng-change="recalculateLapData()"
                                    invalid-message="'That is not a real laptime'"
                                    required-message="'Yo this is required'"
                                    validate-on="blur" required>
