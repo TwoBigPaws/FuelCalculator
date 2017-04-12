@@ -4,9 +4,11 @@ angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
 
-    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, lapDataHandler, pitStopHandler) {
+    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, raceParameters, lapDataHandler, pitStopHandler) {
       this.fuelTankAttributes = fuelTankAttributes;
       this.fuelTank = fuelTankAttributes.initialFuel ? fuelTankAttributes.initialFuel : fuelTankAttributes.maximumFuel;
+      this.raceParameters = raceParameters;
+      this.raceTime = 0;
 
       this.lapsRemaining = numLaps;
       this.lapNumber = 0;
@@ -32,6 +34,7 @@ angular.module("FuelCalculators",[])
       }
 
       this.consumeFuel = function() {
+        this.raceTime += this.raceParameters.expectedLapTime;
         this.fuelTank -= this.fuelTankAttributes.consumption;
       }
 
@@ -60,6 +63,7 @@ angular.module("FuelCalculators",[])
           lapData.fuelStateOnExit = newFuelTank;
           this.pitStopHandler.handlePitStop(lapData);
         }
+        this.raceTime += raceParameters.pitStopTimePenalty;
         this.fuelTank = newFuelTank;
       };
 
@@ -70,6 +74,10 @@ angular.module("FuelCalculators",[])
             this.doLap();
           }
         }
+      };
+
+      this.totalRaceTime = function () {
+        return this.raceTime;
       };
     };
   });
