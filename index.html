@@ -99,7 +99,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     consumption: undefined,
                     maximumFuel: undefined,
                     initialFuel: undefined,
-                    tankpercentstart: 60
+                    minimumFuel: undefined,
+                    tankpercentstart: 60,
+
+                    validTank: function () {
+                      return this.maximumFuel > 0 && this.minimumFuel > 0 && this.consumption > 0;
+                    }
                   };
                 }
 
@@ -187,7 +192,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
-                  if($scope.lapsinsession && $scope.fuelTank.consumption>0) {
+                  if($scope.lapsinsession && $scope.fuelTank.validTank()) {
                     fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
@@ -300,53 +305,67 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="panel panel-default">
             <div class="panel-body">
 
-                <form class="form-horizontal">
-                    <ul class="nav nav-tabs">
-                        <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab" ng-click="changeCalculationMode(true)">Time</a></li>
-                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab" ng-click="changeCalculationMode(false)">Lap</a></li>
-                    </ul>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">Tank Size</label>
-                      <div class="col-sm-8">
-                        <input class="form-control" type="number" ng-model="fuelTank.maximumFuel" placeholder="Maximum Tank Size" ng-change="recalculateLapData()">
-                      </div>
+              <form class="form-horizontal">
+                <ul class="nav nav-tabs">
+                  <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab"
+                                                                                     ng-click="changeCalculationMode(true)">Time</a>
+                  </li>
+                  <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab"
+                                                                                      ng-click="changeCalculationMode(false)">Lap</a>
+                  </li>
+                </ul>
+                <div class="form-group">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Fuel Tank Attributes</label>
+                    <div class="col-sm-4">
+                      <input class="form-control" type="number" ng-model="fuelTank.maximumFuel"
+                           placeholder="Tank Size" ng-change="recalculateLapData()" required>
                     </div>
+                    <div class="col-sm-4">
+                      <input class="form-control" type="number" ng-model="fuelTank.minimumFuel"
+                           placeholder="Minimum fuel" ng-change="recalculateLapData()" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Fuel consumption / lap</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" id="consumption" ng-model="fuelTank.consumption"
+                             ng-change="recalculateLapData()"
+                             placeholder="Liters, Gallons, Kgs, etc">
+                    </div>
+                  </div>
 
-                    <div class="form-group" ng-show="!byTimePresentation">
-                        <label class="col-sm-4 control-label">Laps</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number Of Laps" ng-change="recalculateLapData()">
-                        </div>
+                  <div class="form-group" ng-show="!byTimePresentation">
+                    <label class="col-sm-4 control-label">Laps</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number of Laps"
+                             ng-change="recalculateLapData()">
                     </div>
-                    <div class="form-group" ng-show="byTimePresentation">
-                        <label class="col-sm-4 control-label">Session Time</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" type="number" ng-model="sessiontimeminutes" placeholder="Session time">
-                        </div>
+                  </div>
+                  <div class="form-group" ng-show="byTimePresentation">
+                    <label class="col-sm-4 control-label">Session Time</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" type="number" ng-model="sessiontimeminutes"
+                             placeholder="Session time">
                     </div>
-                    <div class="form-group" ng-show="byTimePresentation">
-                        <label class="col-sm-4 control-label">Lap Time</label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
-                        </div>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
-                        </div>
+                  </div>
+                  <div class="form-group" ng-show="byTimePresentation">
+                    <label class="col-sm-4 control-label">Lap Time</label>
+                    <div class="col-sm-4">
+                      <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
                     </div>
-                    <div class="form-group" ng-show="byTimePresentation">
-                        <div class="col-sm-12">
-                            <small>Lap duration in seconds {{singlelaptime()}}</small>
-                        </div>
+                    <div class="col-sm-4">
+                      <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
                     </div>
+                  </div>
+                  <div class="form-group" ng-show="byTimePresentation">
+                    <div class="col-sm-12">
+                      <small>Lap duration in seconds {{singlelaptime()}}</small>
+                    </div>
+                  </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Fuel consumption per lap</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" id="consumption" ng-model="fuelTank.consumption" ng-change="recalculateLapData()"
-                                   placeholder="Liters, Gallons, Kgs, etc">
-                        </div>
-                    </div>
-                </form>
+                </div>
+              </form>
             </div>
             <div class="panel-footer" ng-show="validData()">
                 <p class="lead">You need {{fuelneededinsession() | number : 3}} units of fuel</p>

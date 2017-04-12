@@ -9,6 +9,7 @@ describe('FuelCalculator By Lap', function() {
     element(by.model('fuelTank.maximumFuel')).clear().sendKeys('3');
     element(by.model('numberOfLaps')).sendKeys('20');
     element(by.model('fuelTank.consumption')).sendKeys('0.605');
+    element(by.model('fuelTank.minimumFuel')).sendKeys('0.3');
 
 
     // really need to use the gridTest but not sure how to include that library in there yett..
@@ -35,6 +36,8 @@ describe('FuelCalculator By Time', function() {
     element(by.model('lapseconds')).sendKeys('47');
     element(by.model('fuelTank.consumption')).sendKeys('2.69');
     element(by.model('fuelTank.maximumFuel')).clear().sendKeys('90');
+    element(by.model('fuelTank.minimumFuel')).sendKeys('0.3');
+
 
 
     // really need to use the gridTest but not sure how to include that library in there yett..
