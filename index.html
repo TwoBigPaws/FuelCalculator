@@ -26,7 +26,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <title>Fuel Calculator</title>
   <script src="node_modules/angular/angular.js"></script>
-  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
   <script src="node_modules/chart.js/dist/Chart.min.js"></script>
   <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
@@ -90,7 +89,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate','chart.js', 'angularValidator', 'angularMoment'])
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid','chart.js', 'angularValidator'])
     .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
 
                 // TODO this will need to be shared somewhere..
