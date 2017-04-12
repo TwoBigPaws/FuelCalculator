@@ -32,8 +32,7 @@ describe('FuelCalculator By Time', function() {
     element(by.model('fuelTank.consumption')).isDisplayed();
 
     element(by.model('sessiontimeminutes')).sendKeys('40');
-    element(by.model('lapminutes')).sendKeys('2');
-    element(by.model('lapseconds')).sendKeys('47');
+    element(by.model('laptime')).sendKeys('2:47');
     element(by.model('fuelTank.consumption')).sendKeys('2.69');
     element(by.model('fuelTank.maximumFuel')).clear().sendKeys('90');
     element(by.model('fuelTank.minimumFuel')).sendKeys('0.3');
