@@ -147,26 +147,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.sessiontime = function () {
                     return ($scope.sessiontimeminutes * 60);
                 };
-                $scope.singlelaptime = function () {
-                  return (((+$scope.lapminutes || 0) * 60)) + (+$scope.lapseconds || 0);
-                };
-
                 $scope.lapTimeValidator = function (lapTimeString) {
-                  if(!lapTimeString) return false;
-                  var validDurationFormats = ['m:s.ms', 's.ms', 'm:s'];
-                  for(durationFormat in validDurationFormats) {
-                    if(moment(lapTimeString, validDurationFormats[durationFormat], true).isValid()){
-                      console.log("Valid via format " + validDurationFormats[durationFormat]);
-                      console.log(moment.duration(lapTimeString).asSeconds());
-                      return true;
-                    }
-                  }
-                  return false;
+                    const p = /((\d+):)?(\d+)(\.(\d+))?/.exec( lapTimeString );
+                    var isValid = p ? true : false;
+                     $scope.laptimeInSeconds= isValid ? ( +p[3] + (p[2] || 0)*60 + (p[5] || 0)*0.1 ) : 0;
+                    return isValid;
                 };
 
                 $scope.lapsinsession = function () {
                     if ($scope.byTimePresentation){
-                        var laps = $scope.sessiontime() / $scope.singlelaptime();
+                        var laps = $scope.sessiontime() / $scope.laptimeInSeconds;
                         var lapCount = Math.ceil(laps);
                         var remainder = lapCount - laps;
                         if (remainder < 0.3) {
@@ -361,10 +351,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                    required-message="'Yo this is required'"
                                    validate-on="blur" required>
                         </div>
-                  </div>
-                  <div class="form-group" ng-show="byTimePresentation">
-                    <div class="col-sm-12">
-                      <small>Lap duration in seconds {{singlelaptime()}}</small>
+                    </div>
+                    <div class="form-group" ng-show="byTimePresentation">
+                        <div class="col-sm-12">
+                            <small>Lap duration in seconds {{laptimeInSeconds}}</small>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Fuel consumption per lap</label>
                         <div class="col-sm-8">
