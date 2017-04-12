@@ -9,7 +9,7 @@ describe('Calculator', function () {
 
   beforeEach(inject(function (_ByLap_) {
     $ByLap = _ByLap_;
-    fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, consumption:  0.605};
+    fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, minimumFuel:0, consumption:  0.605};
   }));
 
   it('should handle no lapDapHandler correctly', function () {
@@ -34,7 +34,7 @@ describe('Calculator', function () {
   it('should compute correct number of pitstops', function () {
     var pitStopHandler = {};
     pitStopHandler.handlePitStop = jasmine.createSpy("handlePitStop");
-    var fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, consumption:  2};
+    var fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, minimumFuel: 0, consumption:  2};
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, expectedLaps, undefined, pitStopHandler);
     fc.startRace();
     expect(pitStopHandler.handlePitStop.calls.count()).toBe(4);
@@ -43,7 +43,7 @@ describe('Calculator', function () {
   it('Pitstop event should indicate how much fuel was put in', function () {
     var pitStopHandler = {};
     pitStopHandler.handlePitStop = jasmine.createSpy("handlePitStop");
-    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 10, consumption:2}, 10, undefined, pitStopHandler);
+    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 10, minimumFuel:0, consumption:2}, 10, undefined, pitStopHandler);
     fc.startRace();
     expect(pitStopHandler.handlePitStop.calls.first()).toEqual({object: pitStopHandler, args: [{lapNumber:5, fuelState:0, fuelAdded:10, fuelStateOnExit:10}], returnValue: undefined});
 
@@ -83,5 +83,18 @@ describe('Calculator', function () {
     fc.startRace();
     expect(pitStopHandler.numPitstops).toBe(0);
   });
+
+  it('should not attempt to cough across the line gasping for fuel', function () {
+    var pitStopHandler = {numPitstops: 0, fuelAdded: 0};
+    pitStopHandler.handlePitStop = function (pitStopData) {
+      this.fuelAdded = pitStopData.fuelAdded;
+      this.numPitstops++;
+    }
+    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 5, minimumFuel:0.3, consumption: 1}, 5, undefined, pitStopHandler);
+    fc.startRace();
+    expect(pitStopHandler.numPitstops).toBe(1);
+  });
+
+
 
 });

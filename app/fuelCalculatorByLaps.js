@@ -25,16 +25,29 @@ angular.module("FuelCalculators",[])
         }
       };
 
-      this.doLap = function () {
+      this.completeLap = function() {
         this.lapsRemaining--;
         this.lapNumber++;
+        this.consumeFuel();
+      }
+
+      this.consumeFuel = function() {
         this.fuelTank -= this.fuelTankAttributes.consumption;
-        if (this.fuelTank < this.fuelTankAttributes.consumption && this.lapsRemaining > 0) {
+      }
+
+      this.pitStopStrategyDecision = function () {
+        // we need to make sure that we would consume fuel below minimumFuel
+        // when the engine starts coughing
+        var wouldBeBelowMinimum = (this.fuelTank - this.fuelTankAttributes.consumption) < this.fuelTankAttributes.minimumFuel;
+        if (wouldBeBelowMinimum && this.lapsRemaining > 0) {
           this.pitstop();
         }
+      };
+      this.doLap = function () {
+        this.completeLap();
+        this.pitStopStrategyDecision();
         this.emitLap();
       };
-
       this.raceCompleted = function () {
         return this.lapsRemaining === 0;
       };
