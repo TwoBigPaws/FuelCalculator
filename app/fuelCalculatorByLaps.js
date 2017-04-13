@@ -6,7 +6,7 @@ angular.module("FuelCalculators",[])
 
     this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, raceParameters, lapDataHandler, pitStopHandler) {
       this.fuelTankAttributes = fuelTankAttributes;
-      this.fuelTank = fuelTankAttributes.initialFuel ? fuelTankAttributes.initialFuel : fuelTankAttributes.maximumFuel;
+      this.fuelTank = fuelTankAttributes.initialFuel === undefined ? fuelTankAttributes.maximumFuel : fuelTankAttributes.initialFuel;
       this.raceParameters = raceParameters;
       this.raceTime = 0;
 
@@ -65,6 +65,10 @@ angular.module("FuelCalculators",[])
         }
         this.raceTime += raceParameters.pitStopTimePenalty;
         this.fuelTank = newFuelTank;
+      };
+
+      this.canStartRace = function () {
+        return this.fuelTank > 0 && this.fuelTankAttributes.consumption > 0;
       };
 
       this.startRace = function () {

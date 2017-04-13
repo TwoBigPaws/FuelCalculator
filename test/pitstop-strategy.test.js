@@ -44,6 +44,22 @@ describe('Pitstop Strategy', function () {
     expect(fc.totalRaceTime()).toBe(960); // 900 + 3 pitstops
   });
 
+  it('should not be a valid Race if there is no fuel in the tank', function () {
+    var raceParameters = {expectedLapTime:100, pitStopTimePenalty:60};
+    fuelTankAttributes.initialFuel = 0; // start off with a smaller tank which forces a pitstop
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, 9, raceParameters);
+    expect(fc.canStartRace()).toBe(false);
+  });
+
+  it('should not be a valid Race if the car consumes no fuel', function () {
+    var raceParameters = {expectedLapTime:100, pitStopTimePenalty:60};
+    fuelTankAttributes.consumption = 0;
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, 9, raceParameters);
+    expect(fc.canStartRace()).toBe(false);
+  });
+
+
+
 
 
 });
