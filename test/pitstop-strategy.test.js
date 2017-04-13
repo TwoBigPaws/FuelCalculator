@@ -58,6 +58,12 @@ describe('Pitstop Strategy', function () {
     expect(fc.canStartRace()).toBe(false);
   });
 
+  it('should not be a valid Race if there are no laps', function () {
+    var raceParameters = {expectedLapTime:100, pitStopTimePenalty:60};
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, 0, raceParameters);
+    expect(fc.canStartRace()).toBe(false);
+  });
+
 
 
 

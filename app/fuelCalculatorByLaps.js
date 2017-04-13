@@ -68,7 +68,7 @@ angular.module("FuelCalculators",[])
       };
 
       this.canStartRace = function () {
-        return this.fuelTank > 0 && this.fuelTankAttributes.consumption > 0;
+        return this.fuelTank > 0 && this.fuelTankAttributes.consumption > 0 && this.lapsRemaining>0;
       };
 
       this.startRace = function () {
