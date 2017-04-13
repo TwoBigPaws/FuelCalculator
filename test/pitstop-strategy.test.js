@@ -9,7 +9,7 @@ describe('Pitstop Strategy', function () {
 
   beforeEach(inject(function (_ByLap_) {
     $ByLap = _ByLap_;
-    fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, consumption: 1};
+    fuelTankAttributes = {maximumFuel: 9, initialFuel: 9, minimumFuel:0, consumption: 1};
   }));
 
 

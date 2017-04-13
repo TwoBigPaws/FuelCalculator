@@ -91,7 +91,7 @@ describe('Calculator', function () {
       this.fuelAdded = pitStopData.fuelAdded;
       this.numPitstops++;
     }
-    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 5, minimumFuel:0.3, consumption: 1}, 5, undefined, pitStopHandler);
+    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 5, minimumFuel:0.3, consumption: 1}, 5, pitStopParameters, undefined, pitStopHandler);
     fc.startRace();
     expect(pitStopHandler.numPitstops).toBe(1);
   });
