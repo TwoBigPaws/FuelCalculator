@@ -207,7 +207,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   $scope.lapminutes = null;
                   $scope.lapseconds = null;
                   $scope.numberOfLaps = null;
-                  $scope.fuelTank =  FuelTank();
+                  $scope.fuelTank =  FuelTankFactory.newFuelTank();
                 };
 
                 $scope.changeCalculationMode = function(value){
