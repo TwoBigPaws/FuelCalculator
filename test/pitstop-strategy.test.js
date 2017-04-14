@@ -16,7 +16,8 @@ describe('Pitstop Strategy', function () {
 
   it('should calculate expected race time with no pitstops', function () {
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters);
-    fc.startRace();
+    var raceResult = fc.startRace();
+    expect(raceResult.chequeredFlag).toBe(true);
     expect(fc.totalRaceTime()).toBe(900);
   });
 

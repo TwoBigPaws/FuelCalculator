@@ -24,6 +24,31 @@ describe('Calculator', function () {
     fc.startRace();
   });
 
+  it('should confirm the car saw the Chequered Flag', function () {
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters, {}, undefined);
+    var raceResult = fc.startRace();
+    expect(raceResult.chequeredFlag).toBe(true);
+  });
+
+  it('should run out of Fuel and not complete the race if using a dogy PitStopStrategy', function () {
+    raceParameters.pitStopStrategy = {
+      shouldPit: function (lapData) {
+        return false;
+      }
+    };
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters, {}, undefined);
+    var raceResult = fc.startRace();
+    expect(raceResult.chequeredFlag).toBe(false);
+    expect(raceResult.lapsCompleted).toBe(14); // we make 15 laps with this consumption before it gives up on lap 16
+  });
+
+  it('should return Race Result showing all the laps Completed', function () {
+    fuelTankAttributes = {maximumFuel: 9, initialFuel: 1, minimumFuel:0, consumption:  0.605};
+    var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters, {}, undefined);
+    var raceResult = fc.startRace();
+    expect(raceResult.lapsCompleted).toBe(20);
+  });
+
   it('should compute correct number of laps', function () {
     var lapDataHandler = {};
     lapDataHandler.handleData = jasmine.createSpy("handleData");
