@@ -8,16 +8,32 @@ angular.module("FuelCalculators",[])
       this.fuelTankAttributes = fuelTankAttributes;
       this.fuelTank = fuelTankAttributes.initialFuel === undefined ? fuelTankAttributes.maximumFuel : fuelTankAttributes.initialFuel;
       this.raceParameters = raceParameters;
+
+      this.pitstopStrategy = {
+        consumption: this.fuelTankAttributes.consumption,
+        minimumFuel: this.fuelTankAttributes.minimumFuel,
+        shouldPit: function (lapData) {
+          // we need to make sure that we would consume fuel below minimumFuel
+          // when the engine starts coughing
+          var wouldBeBelowMinimum = (lapData.fuelState - this.consumption) < this.minimumFuel;
+          if (wouldBeBelowMinimum && lapData.lapsRemaining > 0) {
+            return true;
+          }
+          return false;
+
+        }
+      };
       this.raceTime = 0;
 
       this.lapsRemaining = raceParameters.numLaps;
       this.lapNumber = 0;
+
       this.lapDataHandler = lapDataHandler;
       this.pitStopHandler = pitStopHandler;
 
 
       this.lapData = function () {
-        return {lapNumber: this.lapNumber, fuelState: this.fuelTank};
+        return {lapNumber: this.lapNumber, fuelState: this.fuelTank, lapsRemaining: this.lapsRemaining};
       };
 
       this.emitLap = function () {
@@ -39,10 +55,7 @@ angular.module("FuelCalculators",[])
       }
 
       this.pitStopStrategyDecision = function () {
-        // we need to make sure that we would consume fuel below minimumFuel
-        // when the engine starts coughing
-        var wouldBeBelowMinimum = (this.fuelTank - this.fuelTankAttributes.consumption) < this.fuelTankAttributes.minimumFuel;
-        if (wouldBeBelowMinimum && this.lapsRemaining > 0) {
+        if(this.pitstopStrategy.shouldPit(this.lapData())) {
           this.pitstop();
         }
       };
