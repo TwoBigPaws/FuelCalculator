@@ -197,7 +197,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
                   if($scope.lapsinsession()>0 && $scope.fuelTank.validTank()) {
-                    fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), lapDataHandler, pitStopHandler);
+                    var raceParameters = {
+                      expectedLapTime: $scope.laptimeInSeconds,
+                      numLaps: $scope.lapsinsession()
+                    }
+                    fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, raceParameters, lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
                   if($scope.validData()){
