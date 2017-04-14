@@ -12,6 +12,7 @@ angular.module("FuelCalculators",[])
       this.pitstopStrategy = {
         consumption: this.fuelTankAttributes.consumption,
         minimumFuel: this.fuelTankAttributes.minimumFuel,
+        maximumFuel: this.fuelTankAttributes.maximumFuel,
         shouldPit: function (lapData) {
           // we need to make sure that we would consume fuel below minimumFuel
           // when the engine starts coughing
@@ -20,7 +21,9 @@ angular.module("FuelCalculators",[])
             return true;
           }
           return false;
-
+        },
+        fuelLevelToFillTo: function (lapData) {
+          return this.maximumFuel;
         }
       };
       this.raceTime = 0;
@@ -55,8 +58,9 @@ angular.module("FuelCalculators",[])
       }
 
       this.pitStopStrategyDecision = function () {
-        if(this.pitstopStrategy.shouldPit(this.lapData())) {
-          this.pitstop();
+        var lapData = this.lapData();
+        if(this.pitstopStrategy.shouldPit(lapData)) {
+          this.pitstop(this.pitstopStrategy.fuelLevelToFillTo(lapData));
         }
       };
       this.doLap = function () {
@@ -68,11 +72,11 @@ angular.module("FuelCalculators",[])
         return this.lapsRemaining === 0;
       };
 
-      this.pitstop = function () {
-        var newFuelTank = this.fuelTankAttributes.maximumFuel;
+      this.pitstop = function (fuelLevelToFillTo) {
+        var newFuelTank = fuelLevelToFillTo;
         if(this.pitStopHandler && this.pitStopHandler.handlePitStop){
           var lapData = this.lapData();
-          lapData.fuelAdded = this.fuelTankAttributes.maximumFuel - this.fuelTank;
+          lapData.fuelAdded = fuelLevelToFillTo - this.fuelTank;
           lapData.fuelStateOnExit = newFuelTank;
           this.pitStopHandler.handlePitStop(lapData);
         }
