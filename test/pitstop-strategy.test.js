@@ -18,28 +18,28 @@ describe('Pitstop Strategy', function () {
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters);
     var raceResult = fc.startRace();
     expect(raceResult.chequeredFlag).toBe(true);
-    expect(fc.totalRaceTime()).toBe(900);
+    expect(raceResult.totalRaceTime).toBe(900);
   });
 
   it('should calculate expected race time with 1 pitstops', function () {
     fuelTankAttributes.consumption = 1.5; // increase fuel consumption so that it forces at least 1 pitstop
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters);
-    fc.startRace();
-    expect(fc.totalRaceTime()).toBe(960);
+    var raceResult = fc.startRace();
+    expect(raceResult.totalRaceTime).toBe(960);
   });
 
   it('should calculate expected race time with 2 pitstops', function () {
     fuelTankAttributes.consumption = 3; // increase fuel consumption so that it forces at least 1 pitstop
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters);
-    fc.startRace();
-    expect(fc.totalRaceTime()).toBe(1020); // 900 + 3 pitstops
+    var raceResult = fc.startRace();
+    expect(raceResult.totalRaceTime).toBe(1020); // 900 + 3 pitstops
   });
 
   it('should calculate expected race time with initial Fuel', function () {
     fuelTankAttributes.initialFuel = 3; // start off with a smaller tank which forces a pitstop
     var fc = new $ByLap.FuelCalculatorByLap(fuelTankAttributes, raceParameters);
-    fc.startRace();
-    expect(fc.totalRaceTime()).toBe(960); // 900 + 3 pitstops
+    var raceResult = fc.startRace();
+    expect(raceResult.totalRaceTime).toBe(960); // 900 + 3 pitstops
   });
 
   it('should not be a valid Race if there is no fuel in the tank', function () {

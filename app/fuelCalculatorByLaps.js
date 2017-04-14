@@ -102,13 +102,10 @@ angular.module("FuelCalculators",[])
           }
           return {
             chequeredFlag: this.lapsRemaining===0,
-            lapsCompleted: this.lapNumber
+            lapsCompleted: this.lapNumber,
+            totalRaceTime: this.raceTime
           };
         }
-      };
-
-      this.totalRaceTime = function () {
-        return this.raceTime;
       };
     };
   });
