@@ -4,13 +4,13 @@ angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
 
-    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, raceParameters, lapDataHandler, pitStopHandler) {
+    this.FuelCalculatorByLap = function (fuelTankAttributes, raceParameters, lapDataHandler, pitStopHandler) {
       this.fuelTankAttributes = fuelTankAttributes;
       this.fuelTank = fuelTankAttributes.initialFuel === undefined ? fuelTankAttributes.maximumFuel : fuelTankAttributes.initialFuel;
       this.raceParameters = raceParameters;
       this.raceTime = 0;
 
-      this.lapsRemaining = numLaps;
+      this.lapsRemaining = raceParameters.numLaps;
       this.lapNumber = 0;
       this.lapDataHandler = lapDataHandler;
       this.pitStopHandler = pitStopHandler;
