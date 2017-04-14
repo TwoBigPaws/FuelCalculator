@@ -36,6 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="styleSheet" href="node_modules/angular-ui-grid/ui-grid.min.css"/>
 
   <script src="app/fuelCalculatorByLaps.js"></script>
+  <script src="app/services/fuelTank.js"></script>
 
 
 <style type="text/css">
@@ -89,25 +90,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid','chart.js', 'angularValidator'])
-    .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators','FuelTank', 'ui.grid','chart.js', 'angularValidator'])
+    .controller("CalcCtrl", ['$scope','ByLap', 'FuelTankFactory','uiGridConstants', function ($scope, ByLap, FuelTankFactory, uiGridConstants) {
 
-                // TODO this will need to be shared somewhere..
-                function FuelTank() {
-                  return {
-                    consumption: undefined,
-                    maximumFuel: undefined,
-                    initialFuel: undefined,
-                    minimumFuel: undefined,
-                    tankpercentstart: 60,
 
-                    validTank: function () {
-                      return this.maximumFuel > 0 && this.minimumFuel>=0 && this.consumption > 0;
-                    }
-                  };
-                }
 
-                $scope.fuelTank = new FuelTank();
+                $scope.fuelTank = FuelTankFactory.newFuelTank();
 
                 $scope.laptime = "";
 
@@ -219,7 +207,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   $scope.lapminutes = null;
                   $scope.lapseconds = null;
                   $scope.numberOfLaps = null;
-                  $scope.fuelTank = new FuelTank();
+                  $scope.fuelTank =  FuelTank();
                 };
 
                 $scope.changeCalculationMode = function(value){
