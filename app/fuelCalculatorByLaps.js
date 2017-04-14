@@ -20,7 +20,7 @@ angular.module("FuelCalculators",[])
         fuelLevelToFillTo: function (lapData) {
           return this.maximumFuel;
         }
-      }
+      };
     };
 
     this.FuelCalculatorByLap = function (fuelTankAttributes, raceParameters, lapDataHandler, pitStopHandler) {
@@ -28,7 +28,7 @@ angular.module("FuelCalculators",[])
       this.fuelTank = fuelTankAttributes.initialFuel === undefined ? fuelTankAttributes.maximumFuel : fuelTankAttributes.initialFuel;
       this.raceParameters = raceParameters;
 
-      this.pitstopStrategy = SimplePitStopStrategy(fuelTankAttributes.consumption, fuelTankAttributes.minimumFuel, fuelTankAttributes.maximumFuel);
+      this.pitstopStrategy = raceParameters.pitStopStrategy || SimplePitStopStrategy(fuelTankAttributes.consumption, fuelTankAttributes.minimumFuel, fuelTankAttributes.maximumFuel);
       this.raceTime = 0;
 
       this.lapsRemaining = raceParameters.numLaps;
@@ -71,8 +71,11 @@ angular.module("FuelCalculators",[])
         this.pitStopStrategyDecision();
         this.emitLap();
       };
+
       this.raceCompleted = function () {
-        return this.lapsRemaining === 0;
+        // race is over if there are no more laps to do, or there is not enough fuel in the tank
+        // to complete a lap
+        return this.lapsRemaining === 0 || this.fuelTank < (this.fuelTankAttributes.consumption+this.fuelTankAttributes.minimumFuel);
       };
 
       this.pitstop = function (fuelLevelToFillTo) {
@@ -97,6 +100,10 @@ angular.module("FuelCalculators",[])
           while (!this.raceCompleted()) {
             this.doLap();
           }
+          return {
+            chequeredFlag: this.lapsRemaining===0,
+            lapsCompleted: this.lapNumber
+          };
         }
       };
 
