@@ -71,6 +71,12 @@ describe("Genetic Algorithm", function () {
       var encodedBits = pitstopStrategyBitEncoder.encodeBits(new PitstopStrategyIndividual(32, [64]));
       expect(encodedBits.toString()).toEqual("0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0");
     });
+
+    it('multilap PitstopStrategyBitEncoder with 1 pit stops should encode correctly', function () {
+      var pitstopStrategyBitEncoder = new PitstopStrategyBitEncoder();
+      var encodedBits = pitstopStrategyBitEncoder.encodeBits(new PitstopStrategyIndividual(100, [0,64])); // 100% initial fuel, pit on lap 2
+      expect(encodedBits.toString()).toEqual("0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0");
+    });
   });
 
 });
