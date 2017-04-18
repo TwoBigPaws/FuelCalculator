@@ -1,5 +1,13 @@
 "use strict";
 
+
+function PitstopStrategyIndividual( initialFuelPercent, pitstops) {
+    this.initialFuelPercent = initialFuelPercent;
+    this.fuelPercent = pitstops;
+}
+
+
+
 angular.module("GeneticAlgorithms", [])
   .factory("TwoPointCrossOver", function () {
       return {
@@ -17,10 +25,7 @@ angular.module("GeneticAlgorithms", [])
           return Math.floor(Math.random() * 100)+1;
         });
 
-        return {
-          initialFuelPercent: randomInitialFuel,
-          fuelPercent: randomPitstops
-        };
+        return new PitstopStrategyIndividual(randomInitialFuel, randomPitstops)
       }
     };
   });
