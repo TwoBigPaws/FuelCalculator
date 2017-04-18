@@ -9,6 +9,7 @@
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-grid": "^4.0.4",
     "angular-validator": "^1.2.9",
+    "bit-array": "^0.2.2",
     "bootstrap": "^3.3.7"
   },
   "devDependencies": {
