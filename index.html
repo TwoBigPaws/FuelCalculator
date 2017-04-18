@@ -26,12 +26,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <title>Fuel Calculator</title>
   <script src="node_modules/angular/angular.js"></script>
-  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
   <script src="node_modules/chart.js/dist/Chart.min.js"></script>
   <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
-
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+  <script src="node_modules/angular-validator/dist/angular-validator.js"></script>
 
   <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="styleSheet" href="node_modules/angular-ui-grid/ui-grid.min.css"/>
@@ -90,7 +89,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ga('create', 'UA-96339081-1', 'auto');
   ga('send', 'pageview');
 
-  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid', 'ngAnimate','chart.js'])
+  angular.module("CalcApp", ['ui.bootstrap','FuelCalculators', 'ui.grid','chart.js', 'angularValidator'])
     .controller("CalcCtrl", ['$scope','ByLap', 'uiGridConstants', function ($scope, ByLap, uiGridConstants) {
 
                 // TODO this will need to be shared somewhere..
@@ -103,17 +102,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     tankpercentstart: 60,
 
                     validTank: function () {
-                      return this.maximumFuel > 0 && this.minimumFuel > 0 && this.consumption > 0;
+                      return this.maximumFuel > 0 && this.minimumFuel>=0 && this.consumption > 0;
                     }
                   };
                 }
 
                 $scope.fuelTank = new FuelTank();
 
+                $scope.laptime = "";
 
-                $scope.sessiontimeminutes;
-                $scope.lapminutes;
-                $scope.lapseconds;
+
+                //$scope.sessiontimeminutes;
                 $scope.byTimePresentation = true;
 
                 $scope.laps = [];
@@ -148,14 +147,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $scope.sessiontime = function () {
                     return ($scope.sessiontimeminutes * 60);
                 };
-
-                $scope.singlelaptime = function () {
-                    return (((+$scope.lapminutes || 0) * 60)) + (+$scope.lapseconds || 0);
+                $scope.lapTimeValidator = function (lapTimeString) {
+                  var convertedLapTime = 0
+                  const p = /((\d+):)?(\d+)(\.(\d+))?/.exec(lapTimeString);
+                  convertedLapTime = p ? ( +p[3] + (p[2] || 0) * 60 + (p[5] || 0) * 0.1 ) : 0;
+                  if (convertedLapTime > 0) {
+                    $scope.laptimeInSeconds = convertedLapTime;
+                  }
+                  return convertedLapTime > 0;
                 };
 
                 $scope.lapsinsession = function () {
-                    if ($scope.byTimePresentation){
-                        var laps = $scope.sessiontime() / $scope.singlelaptime();
+                    if ($scope.byTimePresentation && $scope.lapTimeValidator($scope.laptime)){
+                        var laps = $scope.sessiontime() / $scope.laptimeInSeconds;
                         var lapCount = Math.ceil(laps);
                         var remainder = lapCount - laps;
                         if (remainder < 0.3) {
@@ -192,7 +196,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 $scope.recalculateLapData = function() {
                   $scope.clearTableData();
-                  if($scope.lapsinsession && $scope.fuelTank.validTank()) {
+                  if($scope.lapsinsession()>0 && $scope.fuelTank.validTank()) {
                     fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, $scope.lapsinsession(), lapDataHandler, pitStopHandler);
                     fc.startRace();
                   }
@@ -305,65 +309,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="panel panel-default">
             <div class="panel-body">
 
-              <form class="form-horizontal">
-                <ul class="nav nav-tabs">
-                  <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab"
-                                                                                     ng-click="changeCalculationMode(true)">Time</a>
-                  </li>
-                  <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab"
-                                                                                      ng-click="changeCalculationMode(false)">Lap</a>
-                  </li>
-                </ul>
-                <div class="form-group">
-                  <div class="form-group">
-                    <label class="col-sm-4 control-label">Fuel Tank Attributes</label>
-                    <div class="col-sm-4">
-                      <input class="form-control" type="number" ng-model="fuelTank.maximumFuel"
-                           placeholder="Tank Size" ng-change="recalculateLapData()" required>
-                    </div>
-                    <div class="col-sm-4">
-                      <input class="form-control" type="number" ng-model="fuelTank.minimumFuel"
-                           placeholder="Minimum fuel" ng-change="recalculateLapData()" required>
-                    </div>
+                <form class="form-horizontal" name="fuelCalculatorForm" novalidate angular-validator>
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" ng-class="{active: byTimePresentation}"><a id="byTimeTab" ng-click="changeCalculationMode(true)">Time</a></li>
+                        <li role="presentation" ng-class="{active: !byTimePresentation}"><a id="byLapTab" ng-click="changeCalculationMode(false)">Lap</a></li>
+                    </ul>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">Tank Size</label>
+                      <div class="col-sm-4">
+                        <input class="form-control" name="maximumFuel" type="number" ng-model="fuelTank.maximumFuel" placeholder="Maximum Tank Size" ng-change="recalculateLapData()">
+                      </div>
+                      <div class="col-sm-4">
+                        <input class="form-control" name="minimumFuel" type="number" ng-model="fuelTank.minimumFuel"
+                               placeholder="Minimum fuel" ng-change="recalculateLapData()" required>
+                      </div>
                   </div>
                   <div class="form-group">
                     <label class="col-sm-4 control-label">Fuel consumption / lap</label>
                     <div class="col-sm-8">
-                      <input class="form-control" id="consumption" ng-model="fuelTank.consumption"
+                      <input class="form-control" id="consumption" name="consumption" ng-model="fuelTank.consumption"
                              ng-change="recalculateLapData()"
                              placeholder="Liters, Gallons, Kgs, etc">
                     </div>
                   </div>
 
-                  <div class="form-group" ng-show="!byTimePresentation">
-                    <label class="col-sm-4 control-label">Laps</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="number" ng-model="numberOfLaps" placeholder="Number of Laps"
-                             ng-change="recalculateLapData()">
-                    </div>
-                  </div>
-                  <div class="form-group" ng-show="byTimePresentation">
-                    <label class="col-sm-4 control-label">Session Time</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="number" ng-model="sessiontimeminutes"
-                             placeholder="Session time">
-                    </div>
-                  </div>
-                  <div class="form-group" ng-show="byTimePresentation">
-                    <label class="col-sm-4 control-label">Lap Time</label>
-                    <div class="col-sm-4">
-                      <input class="form-control" type="number" ng-model="lapminutes" placeholder="Minutes">
-                    </div>
-                    <div class="col-sm-4">
-                      <input class="form-control" type="number" ng-model="lapseconds" placeholder="Seconds">
-                    </div>
-                  </div>
-                  <div class="form-group" ng-show="byTimePresentation">
-                    <div class="col-sm-12">
-                      <small>Lap duration in seconds {{singlelaptime()}}</small>
-                    </div>
-                  </div>
 
+                    <div class="form-group" ng-show="!byTimePresentation">
+                        <label class="col-sm-4 control-label">Laps</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" name="numberOfLaps" type="number" ng-model="numberOfLaps" placeholder="Number Of Laps" ng-change="recalculateLapData()">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="byTimePresentation">
+                        <label class="col-sm-4 control-label">Session Time</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" name="sessionTimeMinutes" type="number" ng-model="sessiontimeminutes" placeholder="Session time">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="byTimePresentation">
+                        <label class="col-sm-4 control-label">Lap Time</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="laptime" ng-model="laptime" placeholder="Laptime in mm:ss.SSS" validator="lapTimeValidator(laptime) === true"
+                                   ng-change="recalculateLapData()"
+                                   invalid-message="'That is not a real laptime'"
+                                   required-message="'Yo this is required'"
+                                   validate-on="dirty" required>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="byTimePresentation">
+                        <div class="col-sm-12">
+                            <small>Lap duration in seconds {{laptimeInSeconds}}</small>
+                        </div>
                 </div>
               </form>
             </div>
