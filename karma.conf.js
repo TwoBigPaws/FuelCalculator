@@ -18,6 +18,7 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+      'node_modules/node-bitarray/index.js',
       'app/*.js',
       'app/**/*.js',
       'test/*.js'

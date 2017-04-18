@@ -1,11 +1,24 @@
 "use strict";
 
 
-function PitstopStrategyIndividual( initialFuelPercent, pitstops) {
-    this.initialFuelPercent = initialFuelPercent;
-    this.fuelPercent = pitstops;
+function PitstopStrategyIndividual(initialFuelPercent, pitstops) {
+  this.initialFuelPercent = initialFuelPercent;
+  this.pitstopFuelPercent = pitstops;
 }
 
+
+function PitstopStrategyBitEncoder() {
+  return {
+    encodeBits: function (pitstopStrategyIndividual) {
+      var arrays =  [];
+      arrays.push(BitArray.parse(pitstopStrategyIndividual.initialFuelPercent, true));
+      arrays = arrays.concat(pitstopStrategyIndividual.pitstopFuelPercent.map(function (x) {
+        return BitArray.parse(x,true);
+      }));
+      return BitArray.parse(arrays);
+    }
+  };
+}
 
 
 angular.module("GeneticAlgorithms", [])
@@ -22,10 +35,10 @@ angular.module("GeneticAlgorithms", [])
       createRandomIndividual: function (numLaps) {
         var randomInitialFuel = Math.floor(Math.random() * 100 + 1);
         var randomPitstops = Array.apply(null, Array(numLaps)).map(function () {
-          return Math.floor(Math.random() * 100)+1;
+          return Math.floor(Math.random() * 100) + 1;
         });
 
-        return new PitstopStrategyIndividual(randomInitialFuel, randomPitstops)
+        return new PitstopStrategyIndividual(randomInitialFuel, randomPitstops);
       }
     };
   });
