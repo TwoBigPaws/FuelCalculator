@@ -79,6 +79,27 @@ describe("Genetic Algorithm", function () {
     });
   });
 
+  describe("PitstopStrategyBitDecoder", function () {
+    it('should decode empty PitstopStrategy correctly', function () {
+      var pitStopStrategyBitDecoder = new PitStopStrategyBitDecoder();
+      var pitstopStrategy = pitStopStrategyBitDecoder.decodeBits(BitArray.parse(0, true));
+      expect(pitstopStrategy).toEqual(new PitstopStrategyIndividual(0,[]));
+    });
+
+    it('should decode initialFuelOnly PitstopStrategy correctly', function () {
+      var pitStopStrategyBitDecoder = new PitStopStrategyBitDecoder();
+      var pitstopStrategy = pitStopStrategyBitDecoder.decodeBits(BitArray.fromBinary("011001000000000001000000"));
+      expect(pitstopStrategy).toEqual(new PitstopStrategyIndividual(100,[0,64]));
+    });
+
+    it('simple initialFuel PitstopStrategyBitEncoder with 1 pit stops should decode correctly', function () {
+      var pitStopStrategyBitDecoder = new PitStopStrategyBitDecoder();
+      var bitArray = BitArray.fromBinary("0010000001000000");
+      var pitstopStrategy = pitStopStrategyBitDecoder.decodeBits(bitArray);
+      expect(pitstopStrategy).toEqual(new PitstopStrategyIndividual(32,[64]));
+    });
+  });
+
 });
 
 
