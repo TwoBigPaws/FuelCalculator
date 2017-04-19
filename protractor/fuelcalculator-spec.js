@@ -48,6 +48,30 @@ describe('FuelCalculator By Time', function() {
     expect(element(by.binding('lapsinsession')).getText()).toBe('Your race should be 15 laps');
     expect(element(by.binding('fuelneededinsession')).getText()).toBe('You need 40.350 units of fuel');
   });
+})
+
+describe('Tab Switching', function() {
+  it('It should clear the form when switching tabs', function() {
+    browser.get('http://localhost:8080/');
+
+    element(by.id('byTimeTab')).click();
+
+    element(by.model('sessiontimeminutes')).sendKeys('40');
+    element(by.model('laptime')).sendKeys('2:47');
+    element(by.model('fuelTank.consumption')).sendKeys('2.69');
+    element(by.model('fuelTank.maximumFuel')).clear().sendKeys('90');
+    element(by.model('fuelTank.minimumFuel')).sendKeys('0.3');
+
+
+    element(by.id('byLapTab')).click();
+
+    var rows = element(by.id('pitStopGrid')).element( by.css('.ui-grid-render-container-body')).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
+    expect(rows.count()).toEqual(0);
+
+    expect(element(by.model('fuelTank.consumption')).getText()).toBe('');
+    expect(element(by.model('fuelTank.minimumFuel')).getText()).toBe('');
+    expect(element(by.model('fuelTank.maximumFuel')).getText()).toBe('');
+  });
 });
 
 

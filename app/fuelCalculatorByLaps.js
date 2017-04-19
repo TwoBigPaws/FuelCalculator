@@ -3,19 +3,43 @@
 angular.module("FuelCalculators",[])
   .service("ByLap", function () {
 
+    var SimplePitStopStrategy = function (consumption, minimumFuel, maximumFuel) {
+      return {
+        consumption: consumption,
+        minimumFuel: minimumFuel,
+        maximumFuel: maximumFuel,
+        shouldPit: function (lapData) {
+          // we need to make sure that we would consume fuel below minimumFuel
+          // when the engine starts coughing
+          var wouldBeBelowMinimum = (lapData.fuelState - this.consumption) < this.minimumFuel;
+          if (wouldBeBelowMinimum && lapData.lapsRemaining > 0) {
+            return true;
+          }
+          return false;
+        },
+        fuelLevelToFillTo: function (lapData) {
+          return this.maximumFuel;
+        }
+      };
+    };
 
-    this.FuelCalculatorByLap = function (fuelTankAttributes, numLaps, lapDataHandler, pitStopHandler) {
+    this.FuelCalculatorByLap = function (fuelTankAttributes, raceParameters, lapDataHandler, pitStopHandler) {
       this.fuelTankAttributes = fuelTankAttributes;
-      this.fuelTank = fuelTankAttributes.initialFuel ? fuelTankAttributes.initialFuel : fuelTankAttributes.maximumFuel;
+      this.fuelTank = fuelTankAttributes.initialFuel === undefined ? fuelTankAttributes.maximumFuel : fuelTankAttributes.initialFuel;
+      this.raceParameters = raceParameters;
 
-      this.lapsRemaining = numLaps;
+      this.pitstopStrategy = raceParameters.pitStopStrategy || SimplePitStopStrategy(fuelTankAttributes.consumption, fuelTankAttributes.minimumFuel, fuelTankAttributes.maximumFuel);
+      this.raceTime = 0;
+
+      this.lapsRemaining = raceParameters.numLaps;
       this.lapNumber = 0;
+
       this.lapDataHandler = lapDataHandler;
       this.pitStopHandler = pitStopHandler;
 
 
       this.lapData = function () {
-        return {lapNumber: this.lapNumber, fuelState: this.fuelTank};
+        return {lapNumber: this.lapNumber, fuelState: this.fuelTank, lapsRemaining: this.lapsRemaining};
       };
 
       this.emitLap = function () {
@@ -32,15 +56,14 @@ angular.module("FuelCalculators",[])
       }
 
       this.consumeFuel = function() {
+        this.raceTime += this.raceParameters.expectedLapTime;
         this.fuelTank -= this.fuelTankAttributes.consumption;
       }
 
       this.pitStopStrategyDecision = function () {
-        // we need to make sure that we would consume fuel below minimumFuel
-        // when the engine starts coughing
-        var wouldBeBelowMinimum = (this.fuelTank - this.fuelTankAttributes.consumption) < this.fuelTankAttributes.minimumFuel;
-        if (wouldBeBelowMinimum && this.lapsRemaining > 0) {
-          this.pitstop();
+        var lapData = this.lapData();
+        if(this.pitstopStrategy.shouldPit(lapData)) {
+          this.pitstop(this.pitstopStrategy.fuelLevelToFillTo(lapData));
         }
       };
       this.doLap = function () {
@@ -48,19 +71,27 @@ angular.module("FuelCalculators",[])
         this.pitStopStrategyDecision();
         this.emitLap();
       };
+
       this.raceCompleted = function () {
-        return this.lapsRemaining === 0;
+        // race is over if there are no more laps to do, or there is not enough fuel in the tank
+        // to complete a lap
+        return this.lapsRemaining === 0 || this.fuelTank < (this.fuelTankAttributes.consumption+this.fuelTankAttributes.minimumFuel);
       };
 
-      this.pitstop = function () {
-        var newFuelTank = this.fuelTankAttributes.maximumFuel;
+      this.pitstop = function (fuelLevelToFillTo) {
+        var newFuelTank = fuelLevelToFillTo;
         if(this.pitStopHandler && this.pitStopHandler.handlePitStop){
           var lapData = this.lapData();
-          lapData.fuelAdded = this.fuelTankAttributes.maximumFuel - this.fuelTank;
+          lapData.fuelAdded = fuelLevelToFillTo - this.fuelTank;
           lapData.fuelStateOnExit = newFuelTank;
           this.pitStopHandler.handlePitStop(lapData);
         }
+        this.raceTime += raceParameters.pitStopTimePenalty;
         this.fuelTank = newFuelTank;
+      };
+
+      this.canStartRace = function () {
+        return this.fuelTank > 0 && this.fuelTankAttributes.consumption > 0 && this.lapsRemaining>0;
       };
 
       this.startRace = function () {
@@ -69,6 +100,11 @@ angular.module("FuelCalculators",[])
           while (!this.raceCompleted()) {
             this.doLap();
           }
+          return {
+            chequeredFlag: this.lapsRemaining===0,
+            lapsCompleted: this.lapNumber,
+            totalRaceTime: this.raceTime
+          };
         }
       };
     };
