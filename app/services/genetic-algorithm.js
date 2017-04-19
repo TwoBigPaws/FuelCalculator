@@ -11,6 +11,11 @@ PitstopStrategyIndividual.equals = function (a, b) {
 };
 
 
+/**
+ * Encodes a #PitstopStrategyIndividual into bits by lining up
+ * the objects internal details into a contiguous BitArray
+ * @see PitStopStrategyBitDecoder
+ */
 function PitstopStrategyBitEncoder() {
   return {
     encodeBits: function (pitstopStrategyIndividual) {
@@ -24,6 +29,10 @@ function PitstopStrategyBitEncoder() {
   };
 }
 
+/**
+ * Decodes a BitArray encoded #PitstopStrategyIndividual back into object form
+ * @see PitstopStrategyBitEncoder
+ */
 function PitStopStrategyBitDecoder() {
   return {
     decodeBits: function (bitArray) {
