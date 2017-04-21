@@ -60,4 +60,19 @@ describe('Pitstop Strategy', function () {
     expect(fc.canStartRace()).toBe(false);
   });
 
+  it('Regression Test #1', function () {
+    var pitStopHandler = {numPitstops: 0, fuelAdded: 0};
+    pitStopHandler.handlePitStop = function (pitStopData) {
+      this.fuelAdded = pitStopData.fuelAdded;
+      this.numPitstops++;
+    };
+    raceParameters.numLaps = 20;
+    var fc = new $ByLap.FuelCalculatorByLap({maximumFuel: 20, minimumFuel:4, consumption: 4}, raceParameters, undefined, pitStopHandler);
+    var raceResult = fc.startRace();
+    expect(pitStopHandler.numPitstops).toBe(4);
+    expect(raceResult.chequeredFlag).toBe(true);
+    expect(raceResult.lapsCompleted).toBe(20);
+  });
+
+
 });
