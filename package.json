@@ -4,14 +4,14 @@
   "description": "Tool to calculate racing fuel strategies, particularly for iRacing",
   "main": "index.html",
   "dependencies": {
+  },
+  "devDependencies": {
     "angular": "^1.6.4",
     "angular-chart.js": "^1.1.1",
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-grid": "^4.0.4",
     "angular-validator": "^1.2.9",
-    "bootstrap": "^3.3.7"
-  },
-  "devDependencies": {
+    "bootstrap": "^3.3.7",
     "angular-mocks": "^1.6.4",
     "jasmine-core": "^2.5.2",
     "karma": "^1.5.0",
