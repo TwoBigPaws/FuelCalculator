@@ -13,14 +13,32 @@ describe("Genetic Algorithm", function () {
     }));
 
     it("should return a son and daughter that are not just the father/mother", function () {
-      var father = {};
-      var mother = {};
+      var father = new PitstopStrategyIndividual(5, [10, 20]);
+      var mother = new PitstopStrategyIndividual(10, [5, 0]);
       var children = $TwoPointCrossOver.crossover(father, mother);
       expect(children.length).toBe(2);
       expect(children[0]).not.toBe(father);
       expect(children[1]).not.toBe(father);
       expect(children[0]).not.toBe(mother);
       expect(children[1]).not.toBe(mother);
+    });
+
+    it("should return a son that has some part of the father", function () {
+      var father = new PitstopStrategyIndividual(0, [100, 50]); // 00000000 01100100 00110010 3 bytes : initialFuel=0, pitStop[0]=100, pitStop[1]=50
+      var mother =  new PitstopStrategyIndividual(100, [0, 100]); // 01100100 00000000 01100100 3 bytes : initialFuel=100, pitStop[0]=0, pitStop[1]=100
+
+      spyOn(Math, "random").and.returnValues(0.25, 0.25); //6th & 18th bits as the 2point crossover
+
+      var children = $TwoPointCrossOver.crossover(father, mother);
+      var son = children[0];
+      var daughter = children[1];
+
+      var pitstopStrategyBitEncoder = new PitstopStrategyBitEncoder();
+
+      var sonBits = pitstopStrategyBitEncoder.encodeBits(son);
+      var daughterBits = pitstopStrategyBitEncoder.encodeBits(daughter);
+      expect(sonBits.toString()).toEqual("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,0");
+      expect(daughterBits.toString()).toEqual("0,1,1,0,0,1,0,0,0,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0");
     });
 
   });
@@ -97,6 +115,15 @@ describe("Genetic Algorithm", function () {
       var bitArray = BitArray.fromBinary("0010000001000000");
       var pitstopStrategy = pitStopStrategyBitDecoder.decodeBits(bitArray);
       expect(pitstopStrategy).toEqual(new PitstopStrategyIndividual(32,[64]));
+    });
+
+    it('Should decode TwoPointCross over example correctlry', function () {
+      var pitStopStrategyBitDecoder = new PitStopStrategyBitDecoder();
+      var father = new PitstopStrategyIndividual(0, [100, 50]); // 00000000 01100100 00110010 3 bytes : initialFuel=0, pitStop[0]=100, pitStop[1]=50
+
+      var bitArray = BitArray.fromBinary("000000000110010000110010");
+      var pitstopStrategy = pitStopStrategyBitDecoder.decodeBits(bitArray);
+      expect(pitstopStrategy).toEqual(new PitstopStrategyIndividual(0,[100,50]));
     });
   });
 

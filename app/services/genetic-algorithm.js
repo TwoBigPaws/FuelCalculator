@@ -57,7 +57,47 @@ angular.module("GeneticAlgorithms", [])
   .factory("TwoPointCrossOver", function () {
       return {
         crossover: function (father, mother) {
-          return [{}, {}];
+          var bitEncoder = new PitstopStrategyBitEncoder();
+
+          var fatherBits = bitEncoder.encodeBits(father).toString().replace(/,/g, "");
+          var motherBits = bitEncoder.encodeBits(mother).toString().replace(/,/g, "");
+
+          var sonBits = fatherBits;
+          var daughterBits = motherBits;
+
+          var numBits = fatherBits.toString().length; // TODO check the mother is the same size?
+
+          var firstPoint = Math.floor(Math.random() * numBits);
+          var secondPoint = numBits - Math.floor(Math.random() * numBits);
+
+          if (firstPoint> secondPoint) {
+            var tmp = firstPoint;
+            firstPoint = secondPoint;
+            secondPoint = tmp;
+          }
+
+          var firstSonBits = sonBits.substr(0, firstPoint);
+          var lastSonBits = sonBits.substr(secondPoint);
+
+          var firstDaughterBits = daughterBits.substr(0, firstPoint);
+          var lastDaughterBits = daughterBits.substr(secondPoint);
+
+          var midMotherBits = motherBits.substr(firstPoint, (secondPoint-firstPoint));
+          var midFatherBits = fatherBits.substr(firstPoint, (secondPoint-firstPoint));
+
+          sonBits = firstSonBits + midMotherBits + lastSonBits;
+          daughterBits = firstDaughterBits + midFatherBits + lastDaughterBits;
+
+
+          var decoder = new PitStopStrategyBitDecoder();
+
+          sonBits = sonBits.split().join(",");
+          daughterBits = daughterBits.split().join(",");
+
+          var son = decoder.decodeBits(BitArray.fromBinary(sonBits));
+          var daughter = decoder.decodeBits(BitArray.fromBinary(daughterBits));
+
+          return [son, daughter];
         }
       };
     }
