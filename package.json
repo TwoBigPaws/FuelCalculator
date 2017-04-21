@@ -22,7 +22,8 @@
     "webpack": "^2.4.1"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start karma.conf.js"
+    "test": "./node_modules/karma/bin/karma start karma.conf.js",
+    "bundle": "webpack"
   },
   "repository": {
     "type": "git",
