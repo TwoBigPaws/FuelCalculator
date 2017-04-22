@@ -4,6 +4,6 @@ node_js:
 install:
   - npm install
 script:
-  - npm bundle
+  - npm run bundle
   - node_modules/karma/bin/karma start karma.conf.js --single-run
 
