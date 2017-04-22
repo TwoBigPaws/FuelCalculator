@@ -70,8 +70,13 @@ You will need _*3*_ terminal windows:
 
     webdriver-manager start
       
-      
-3. Now run the actual tests
+ 
+3. Run Webpack build to generate the bundled source
+
+    npm run bundle
+    
+    
+4. Now run the actual tests
 
 
     protractor protractor/protractor.conf
