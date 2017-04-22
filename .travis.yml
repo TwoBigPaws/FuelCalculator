@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - "7.9.0"
 install:
-  - npm install && npm bundle
-script: node_modules/karma/bin/karma start karma.conf.js --single-run
+  - npm install
+script:
+  - npm bundle
+  - node_modules/karma/bin/karma start karma.conf.js --single-run
 
