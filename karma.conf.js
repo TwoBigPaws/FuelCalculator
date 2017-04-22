@@ -18,8 +18,41 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
-      'app/*.js',
+      'js/*.js',
       'test/*.js'
+    ],
+
+    preprocessors: {
+      // add webpack as preprocessor
+      'test/*_test.js': ['webpack', 'sourcemap'],
+      'test/**/*_test.js': ['webpack', 'sourcemap']
+    },
+
+    webpack: {
+      // you don't need to specify the entry option because
+      // karma watches the test entry points
+      // webpack watches dependencies
+
+      // ... remainder of webpack configuration (or import)
+    },
+
+    webpackMiddleware: {
+      // webpack-dev-middleware configuration
+      // i.e.
+      noInfo: true,
+      // and use stats to turn off verbose output
+      stats: {
+        // options i.e.
+        chunks: false
+      }
+    },
+
+    plugins: [
+      require("karma-webpack"),
+      'karma-jasmine',
+      'karma-chrome-launcher',
+      'karma-coverage',
+      'karma-html-detailed-reporter'
     ],
 
 
@@ -27,23 +60,16 @@ module.exports = function(config) {
     exclude: [
     ],
 
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-    },
-
-
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'html'],
+    reporters: ['progress', 'htmlDetailed'],
 
     htmlReporter: {
       outputFile: 'test/units.html',
 
       // Optional
-      pageTitle: 'FuelCalculator UNit Tests',
+      pageTitle: 'FuelCalculator Unit Tests',
       subPageTitle: '',
       groupSuites: true,
       useCompactStyle: true,
