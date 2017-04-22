@@ -10,4 +10,7 @@ require("../node_modules/chart.js");
 require("../node_modules/angular-chart.js");
 require("../node_modules/angular-ui-grid");
 require("../node_modules/angular-validator");
+require("bootstrap-webpack");
+require("../node_modules/angular-ui-grid/ui-grid");
+
 
