@@ -4,8 +4,8 @@
 //  .controller("CalcCtrl", ['$scope','ByLap', 'FuelTankFactory','uiGridConstants', function ($scope, ByLap, FuelTankFactory, uiGridConstants) {
 //['ui.bootstrap','FuelCalculators','FuelTank', 'ui.grid','chart.js', 'angularValidator']
 
-CalcCtrl.$inject = ['$scope', 'ByLap', 'FuelTankFactory', 'uiGridConstants'];
-function CalcCtrl($scope, ByLap, FuelTankFactory, uiGridConstants) {
+CalcCtrl.$inject = ['$scope', 'RaceByLap', 'FuelTankFactory', 'uiGridConstants'];
+function CalcCtrl($scope, RaceByLap, FuelTankFactory, uiGridConstants) {
 
   $scope.fuelTank = FuelTankFactory.newFuelTank();
 
@@ -107,7 +107,7 @@ function CalcCtrl($scope, ByLap, FuelTankFactory, uiGridConstants) {
         expectedLapTime: $scope.laptimeInSeconds,
         numLaps: $scope.lapsinsession()
       }
-      fc = new ByLap.FuelCalculatorByLap($scope.fuelTank, raceParameters, lapDataHandler, pitStopHandler);
+      var fc = RaceByLap.createRace($scope.fuelTank, raceParameters, lapDataHandler, pitStopHandler);
       fc.startRace();
     }
     if ($scope.validData()) {
