@@ -1,6 +1,6 @@
 "use strict"
 
-//var angular = require("angular");
+var angular = require("angular");
 angular.module("CalcApp", ['ui.bootstrap','FuelCalculators','FuelTank','Strategies', 'ui.grid','chart.js', 'angularValidator']);
 
 require("./controllers");
