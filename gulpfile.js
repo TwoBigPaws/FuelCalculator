@@ -2,6 +2,7 @@
 
 var gulp = require('gulp'),
   argv = require('yargs').argv,
+  run = require('gulp-run'),
   awspublish = require('gulp-awspublish');
 
 const ENV = {
@@ -17,7 +18,7 @@ const BUCKETS = {
 
 gulp.task('build', function () {
 
-  // TODO run `npm run budle` first
+  run('npm run bundle').exec();
 
   gulp.src('js/*').pipe(gulp.dest('site/js/'));
   gulp.src('index.html').pipe(gulp.dest('site'));
