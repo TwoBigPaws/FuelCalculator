@@ -8,3 +8,5 @@ test/units.html
 node_modules
 js
 _reports
+site
+.cache
