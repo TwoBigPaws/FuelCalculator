@@ -2,4 +2,6 @@
 
 var angular = require('angular');
 
-angular.module('CalcApp',['ui.bootstrap','FuelCalculators','FuelTank','Strategies', 'ui.grid','chart.js', 'angularValidator']).controller('CalcCtrl', require('./calc-controller.js'));
+module.exports = angular.module('CalcApp.Controllers',['ui.bootstrap','FuelCalculators','FuelTank','Strategies', 'ui.grid','chart.js', 'angularValidator'])
+  .controller('CalcCtrl', require('./calc-controller.js'))
+  .name;
