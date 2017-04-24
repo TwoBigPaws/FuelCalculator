@@ -55,7 +55,7 @@ gulp.task('deploy', function () {
     .pipe(awspublish.gzip())  // gzip, Set Content-Encoding headers and add .gz extension
     .pipe(publisher.publish())
     .pipe(publisher.sync())
-    //.pipe(publisher.cache())              // create a cache file to speed up consecutive uploads
+    .pipe(publisher.cache())              // create a cache file to speed up consecutive uploads
     .pipe(awspublish.reporter());         // print upload updates to console
 });
 
