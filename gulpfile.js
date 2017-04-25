@@ -16,17 +16,16 @@ const BUCKETS = {
 };
 
 
-gulp.task('build', function () {
+gulp.task('webpack', function(){
+  return run('npm run bundle').exec();
+});
 
-  run('npm run bundle').exec();
-
-  gulp.src('js/*').pipe(gulp.dest('site/js/'));
-  gulp.src('index.html').pipe(gulp.dest('site'));
-  gulp.src('fuel.png').pipe(gulp.dest('site'));
+gulp.task('copy-sources',['webpack'], function () {
+  return gulp.src(['js/**', 'index.html', 'fuel.png'],{ "base" : "." }).pipe(gulp.dest('site'));
 });
 
 
-gulp.task('deploy', function () {
+gulp.task('deploy', ['webpack','copy-sources'],function () {
 
   // Figure out which bucket we are deploying to based on the environment
   // specified by the User.
@@ -58,4 +57,5 @@ gulp.task('deploy', function () {
     .pipe(publisher.cache())              // create a cache file to speed up consecutive uploads
     .pipe(awspublish.reporter());         // print upload updates to console
 });
+
 
